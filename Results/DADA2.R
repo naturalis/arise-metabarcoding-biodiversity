@@ -24,11 +24,11 @@ system2(cutadapt, args = "--version")
 
 # Identify the primers
 
-FWD1 <- "GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGTCCTSCGCTTATTGATATGC"
-FWD2 <- "TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCTAGACTCGTCAACGATGAAGAACGCAG"
-FWD3 <- "TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCTAGACTCGTCACCGATGAAGAACGCAG"
-FWD4 <- "TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCTAGACTCGTCATCGATGAAGAACGTAG"
-FWD5 <- "TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCTAGACTCGTCATCGATGAAGAACGTGG"
+FWD1 <- "CTAGACTCGTCATCGATGAAGAACGCAG"
+FWD2 <- "CTAGACTCGTCAACGATGAAGAACGCAG"
+FWD3 <- "CTAGACTCGTCACCGATGAAGAACGCAG"
+FWD4 <- "CTAGACTCGTCATCGATGAAGAACGTAG"
+FWD5 <- "CTAGACTCGTCATCGATGAAGAACGTGG"
 
 allOrients <- function(primer) {
   require(Biostrings)
@@ -43,7 +43,7 @@ FWD2.orients <- allOrients(FWD2)
 FWD3.orients <- allOrients(FWD3)
 FWD4.orients <- allOrients(FWD4)
 FWD5.orients <- allOrients(FWD5)
-FWD1.orients
+FWD5.orients
 
 fnFs.filtN <- file.path(path, "filtN", basename(fnFs))
 fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
@@ -54,15 +54,25 @@ primerHits <- function(primer, fn) {
   nhits <- vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
   return(sum(nhits > 0))
 }
-rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs[[1]]),
-      FWD1.ReverseReads = sapply(FWD1.orients, primerHits, fn = fnRs[[1]]),
-      FWD2.ForwardReads = sapply(FWD2.orients, primerHits, fn = fnFs[[1]]),
-      FWD2.ReverseReads = sapply(FWD2.orients, primerHits, fn = fnRs[[1]]),
-      FWD3.ForwardReads = sapply(FWD3.orients, primerHits, fn = fnFs[[1]]),
-      FWD3.ReverseReads = sapply(FWD3.orients, primerHits, fn = fnRs[[1]]),
-      FWD4.ForwardReads = sapply(FWD4.orients, primerHits, fn = fnFs[[1]]),
-      FWD4.ReverseReads = sapply(FWD4.orients, primerHits, fn = fnRs[[1]]),
-      FWD5.ForwardReads = sapply(FWD5.orients, primerHits, fn = fnFs[[1]]),
-      FWD5.ReverseReads = sapply(FWD5.orients, primerHits, fn = fnRs[[1]]))
-rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs[[1]]),
-      FWD1.ReverseReads = sapply(FWD1.orients, primerHits, fn = fnRs[[1]]))
+
+rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs.filtN[[1]]),
+      FWD1.ReverseReads = sapply(FWD1.orients, primerHits, fn = fnRs.filtN[[1]]),
+      FWD2.ForwardReads = sapply(FWD2.orients, primerHits, fn = fnFs.filtN[[1]]),
+      FWD2.ReverseReads = sapply(FWD2.orients, primerHits, fn = fnRs.filtN[[1]]),
+      FWD3.ForwardReads = sapply(FWD3.orients, primerHits, fn = fnFs.filtN[[1]]),
+      FWD3.ReverseReads = sapply(FWD3.orients, primerHits, fn = fnRs.filtN[[1]]),
+      FWD4.ForwardReads = sapply(FWD4.orients, primerHits, fn = fnFs.filtN[[1]]),
+      FWD4.ReverseReads = sapply(FWD4.orients, primerHits, fn = fnRs.filtN[[1]]),
+      FWD5.ForwardReads = sapply(FWD5.orients, primerHits, fn = fnFs.filtN[[1]]),
+      FWD5.ReverseReads = sapply(FWD5.orients, primerHits, fn = fnRs.filtN[[1]]))
+
+path.cut <- file.path(path, "cutadapt")
+if(!dir.exists(path.cut)) dir.create(path.cut)
+fnFs.cut <- file.path(path.cut, basename(fnFs))
+fnFs.cut <- file.path(path.cut, basename(fnFs))
+
+FWD1.RC <- dada2:::rc(FWD1)
+FWD2.RC <- dada2:::rc(FWD2)
+FWD3.RC <- dada2:::rc(FWD3)
+FWD4.RC <- dada2:::rc(FWD4)
+FWD5.RC <- dada2:::rc(FWD5)
