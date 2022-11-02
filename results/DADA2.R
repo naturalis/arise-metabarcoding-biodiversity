@@ -54,11 +54,11 @@ REV.orients <- allOrients(REV)
 fnFs.filtN <- file.path(path, "filtN", basename(fnFs))
 fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 # We filter the reads for other characters than A/G/T/C
-filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE)
+filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, minQ = 20, minLen = 200, multithread = TRUE)
 
 # This may not work, but it is worth a shot
-fnFs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnFs))
-fnRs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnRs))
+# fnFs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnFs))
+# fnRs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnRs))
 
 # Here we detect the primers
 primerHits <- function(primer, fn) {
@@ -132,13 +132,11 @@ cutRs <- sort(list.files(path.cut, pattern = "_R2_", full.names = TRUE))
 get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
 sample.names <- unname(sapply(cutFs, get.sample.name))
 head(sample.names)
-plotQualityProfile(cutFs[0:1])
+plotQualityProfile(cutRs[1:2])
 
-# Make a path for filtered and cut reads.
-filtFs <- file.path(path.cut, "filtered", basename(cutFs))
-filtRs <- file.path(path.cut, "filtered", basename(cutRs))
+# Error Rates
 
-out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = Inf, 
-                     truncQ = 1, minQ = 20, minLen = 200, rm.phix = TRUE, compress = TRUE, multithread = FALSE)  # on windows, set multithread = FALSE
+errF <- learnErrors(cutFs, multithread = TRUE)
+errR <- learnErrors(cutRs, multithread = TRUE)
 
-head(out)
+plotErrors(errF, nominalQ = TRUE)
