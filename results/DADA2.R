@@ -7,7 +7,7 @@ library(Biostrings)
 packageVersion("Biostrings")
 
 # Assign the path were the data is
-path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData"
+path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata2"
 list.files(path)
 
 # In the files you have read 1 and read 2 (like forward and reversed reads)
@@ -54,7 +54,8 @@ REV.orients <- allOrients(REV)
 fnFs.filtN <- file.path(path, "filtN", basename(fnFs))
 fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 # We filter the reads for other characters than A/G/T/C
-filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, minQ = 20, minLen = 200, maxLen = 300, multithread = TRUE)
+#filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, minQ = 20, minLen = 200, multithread = TRUE)
+filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE)
 
 # This may not work, but it is worth a shot
 # fnFs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnFs))
@@ -134,6 +135,14 @@ sample.names <- unname(sapply(cutFs, get.sample.name))
 head(sample.names)
 plotQualityProfile(cutRs[1:2])
 
+
+# Filter and trim
+filtFs <- file.path(path.cut, "filtered", basename(cutFs))
+filtRs <- file.path(path.cut, "filtered", basename(cutRs))
+
+out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(2, 2), 
+                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = TRUE)  # on windows, set multithread = FALSE
+head(out)
 # Error Rates Default
 
 errF <- learnErrors(cutFs, multithread = TRUE)

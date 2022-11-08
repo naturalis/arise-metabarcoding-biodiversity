@@ -3,7 +3,7 @@ packageVersion("ShortRead")
 library(ggplot2)
 
 # First we make a list of all the data there is.
-path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData"
+path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata2"
 list.files(path)
 
 fq <- sort(list.files(path, pattern = "e11", full.names = TRUE))
