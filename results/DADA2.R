@@ -7,7 +7,7 @@ library(Biostrings)
 packageVersion("Biostrings")
 
 # Assign the path were the data is
-path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata2"
+path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata3"
 list.files(path)
 
 # In the files you have read 1 and read 2 (like forward and reversed reads)
@@ -132,17 +132,25 @@ cutRs <- sort(list.files(path.cut, pattern = "_R2_", full.names = TRUE))
 # Extract sample names, assuming filenames have format:
 get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
 sample.names <- unname(sapply(cutFs, get.sample.name))
-head(sample.names)
-plotQualityProfile(cutRs[1:2])
+sample.namesR <- unname(sapply(cutRs, get.sample.name))
+head(sample.namesR)
 
+#plotQualityProfile(cutRs[1:2])
 
 # Filter and trim
 filtFs <- file.path(path.cut, "filtered", basename(cutFs))
 filtRs <- file.path(path.cut, "filtered", basename(cutRs))
 
-out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(2, 2), 
-                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = TRUE)  # on windows, set multithread = FALSE
+out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, truncLen=c(225,220), maxEE=c(2,2), truncQ=2, maxN=0, rm.phix=TRUE,
+                     compress=TRUE, verbose=TRUE, multithread=TRUE)  # on windows, set multithread = FALSE
 head(out)
+
+if(!identical(sample.names, sample.namesR)) stop("Forward and reverse files do not match.")
+names(filtFs) <- sample.names
+names(filtRs) <- sample.names
+
+set.seed(100)
+
 # Error Rates Default
 
 errF <- learnErrors(cutFs, multithread = TRUE)
@@ -212,16 +220,17 @@ loessErrfun_mod1 <- function(trans) {
 }
 
 # check what this looks like
-errF_1 <- learnErrors(
-  cutFs,
+
+errR_1 <- learnErrors(
+  cutRs,
   multithread = TRUE,
   nbases = 1e10,
   errorEstimationFunction = loessErrfun_mod1,
   verbose = TRUE
 )
 
-errR_1 <- learnErrors(
-  cutRs,
+errF_1 <- learnErrors(
+  cutFs,
   multithread = TRUE,
   nbases = 1e10,
   errorEstimationFunction = loessErrfun_mod1,
