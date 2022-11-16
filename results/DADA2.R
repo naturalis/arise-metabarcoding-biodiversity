@@ -5,6 +5,8 @@ library(ShortRead)
 packageVersion("ShortRead")
 library(Biostrings)
 packageVersion("Biostrings")
+library(magrittr)
+library(dplyr)
 
 # Assign the path were the data is
 path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata3"
@@ -141,15 +143,42 @@ head(sample.namesR)
 filtFs <- file.path(path.cut, "filtered", basename(cutFs))
 filtRs <- file.path(path.cut, "filtered", basename(cutRs))
 
-out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, truncLen=c(225,220), maxEE=c(2,2), truncQ=2, maxN=0, rm.phix=TRUE,
-                     compress=TRUE, verbose=TRUE, multithread=TRUE)  # on windows, set multithread = FALSE
+out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxEE=c(2,2), truncLen=c(240,200), truncQ=2, maxN=0, rm.phix=TRUE,
+                     minLen = 200, compress=TRUE, verbose=TRUE, multithread=TRUE)  # on windows, set multithread = FALSE
 head(out)
 
 if(!identical(sample.names, sample.namesR)) stop("Forward and reverse files do not match.")
 names(filtFs) <- sample.names
 names(filtRs) <- sample.names
 
-set.seed(100)
+out %>% 
+  data.frame() %>% 
+  mutate(Samples = rownames(.),
+         percent_kept = 100*(reads.out/reads.in)) %>%
+  select(Samples, everything()) %>%
+  summarise(min_remaining = paste0(round(min(percent_kept), 2), "%"), 
+            median_remaining = paste0(round(median(percent_kept), 2), "%"),
+            mean_remaining = paste0(round(mean(percent_kept), 2), "%"), 
+            max_remaining = paste0(round(max(percent_kept), 2), "%"))
+
+if( length(fastqFs) <= 20) {
+  remaining_samplesF <-  fastqFs[
+    which(fastqFs %in% list.files(filtpathF))] # keep only samples that haven't been filtered out
+  remaining_samplesR <-  fastqRs[
+    which(fastqRs %in% list.files(filtpathR))] # keep only samples that haven't been filtered out
+  
+  fwd_qual_plots_filt <- plotQualityProfile(paste0(filtpathF, "/", remaining_samplesF))
+  rev_qual_plots_filt <- plotQualityProfile(paste0(filtpathR, "/", remaining_samplesR))
+} else {
+  remaining_samplesF <-  fastqFs[rand_samples][
+    which(fastqFs[rand_samples] %in% list.files(filtpathF))] # keep only samples that haven't been filtered out
+  remaining_samplesR <-  fastqRs[rand_samples][
+    which(fastqRs[rand_samples] %in% list.files(filtpathR))] # keep only samples that haven't been filtered out
+  fwd_qual_plots_filt <- plotQualityProfile(paste0(filtpathF, "/", remaining_samplesF))
+  rev_qual_plots_filt <- plotQualityProfile(paste0(filtpathR, "/", remaining_samplesR))
+}
+
+fwd_qual_plots_filt
 
 # Error Rates Default
 
@@ -222,7 +251,7 @@ loessErrfun_mod1 <- function(trans) {
 # check what this looks like
 
 errR_1 <- learnErrors(
-  cutRs,
+  filtFs,
   multithread = TRUE,
   nbases = 1e10,
   errorEstimationFunction = loessErrfun_mod1,
@@ -230,7 +259,7 @@ errR_1 <- learnErrors(
 )
 
 errF_1 <- learnErrors(
-  cutFs,
+  filtRs,
   multithread = TRUE,
   nbases = 1e10,
   errorEstimationFunction = loessErrfun_mod1,
@@ -300,19 +329,103 @@ loessErrfun_mod2 <- function(trans) {
 
 # check what this looks like
 errF_2 <- learnErrors(
-  cutFs,
+  filtFs,
   multithread = TRUE,
   nbases = 1e8,
   errorEstimationFunction = loessErrfun_mod2,
   verbose = TRUE
 )
+
+plotErrors(errF_2, nominalQ = TRUE)
+plotErrors(errR_2, nominalQ = TRUE)
 
 
 errR_2 <- learnErrors(
-  cutRs,
+  filtRs,
   multithread = TRUE,
   nbases = 1e8,
   errorEstimationFunction = loessErrfun_mod2,
   verbose = TRUE
 )
+
+# Code 3
+loessErrfun_mod3 <- function(trans) {
+  qq <- as.numeric(colnames(trans))
+  est <- matrix(0, nrow=0, ncol=length(qq))
+  for(nti in c("A","C","G","T")) {
+    for(ntj in c("A","C","G","T")) {
+      if(nti != ntj) {
+        errs <- trans[paste0(nti,"2",ntj),]
+        tot <- colSums(trans[paste0(nti,"2",c("A","C","G","T")),])
+        rlogp <- log10((errs+1)/tot)  # 1 psuedocount for each err, but if tot=0 will give NA
+        rlogp[is.infinite(rlogp)] <- NA
+        df <- data.frame(q=qq, errs=errs, tot=tot, rlogp=rlogp)
+        
+        # original
+        # ###! mod.lo <- loess(rlogp ~ q, df, weights=errs) ###!
+        # mod.lo <- loess(rlogp ~ q, df, weights=tot) ###!
+        # #        mod.lo <- loess(rlogp ~ q, df)
+        
+        # Gulliem Salazar's solution
+        # https://github.com/benjjneb/dada2/issues/938
+        # mod.lo <- loess(rlogp ~ q, df, weights = log10(tot),span = 2)
+        
+        # only change the weights
+        mod.lo <- loess(rlogp ~ q, df, weights = log10(tot))
+        
+        pred <- predict(mod.lo, qq)
+        maxrli <- max(which(!is.na(pred)))
+        minrli <- min(which(!is.na(pred)))
+        pred[seq_along(pred)>maxrli] <- pred[[maxrli]]
+        pred[seq_along(pred)<minrli] <- pred[[minrli]]
+        est <- rbind(est, 10^pred)
+      } # if(nti != ntj)
+    } # for(ntj in c("A","C","G","T"))
+  } # for(nti in c("A","C","G","T"))
+  
+  # HACKY
+  MAX_ERROR_RATE <- 0.25
+  MIN_ERROR_RATE <- 1e-7
+  est[est>MAX_ERROR_RATE] <- MAX_ERROR_RATE
+  est[est<MIN_ERROR_RATE] <- MIN_ERROR_RATE
+  
+  # enforce monotonicity
+  # https://github.com/benjjneb/dada2/issues/791
+  estorig <- est
+  est <- est %>%
+    data.frame() %>%
+    mutate_all(funs(case_when(. < X40 ~ X40,
+                              . >= X40 ~ .))) %>% as.matrix()
+  rownames(est) <- rownames(estorig)
+  colnames(est) <- colnames(estorig)
+  
+  # Expand the err matrix with the self-transition probs
+  err <- rbind(1-colSums(est[1:3,]), est[1:3,],
+               est[4,], 1-colSums(est[4:6,]), est[5:6,],
+               est[7:8,], 1-colSums(est[7:9,]), est[9,],
+               est[10:12,], 1-colSums(est[10:12,]))
+  rownames(err) <- paste0(rep(c("A","C","G","T"), each=4), "2", c("A","C","G","T"))
+  colnames(err) <- colnames(trans)
+  # Return
+  return(err)
+}
+
+# check what this looks like
+errF_3 <- learnErrors(
+  filtFs,
+  multithread = TRUE,
+  nbases = 1e10,
+  errorEstimationFunction = loessErrfun_mod3,
+  verbose = TRUE
+)
+
+# check what this looks like
+errR_3 <- learnErrors(
+  filtRs,
+  multithread = TRUE,
+  nbases = 1e10,
+  errorEstimationFunction = loessErrfun_mod3,
+  verbose = TRUE
+)
+
 
