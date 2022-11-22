@@ -6,7 +6,9 @@ packageVersion("ShortRead")
 library(Biostrings)
 packageVersion("Biostrings")
 library(magrittr)
+packageVersion("magrittr")
 library(dplyr)
+packageVersion("dplyr")
 
 # Assign the path were the data is
 path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata3"
@@ -19,8 +21,8 @@ fnRs <- sort(list.files(path, pattern = "_R2_", full.names = TRUE))
 
 # Quality plot tests -> takes a long time and only does a view.
 # Maybe interesting for in the paper. But little unnecessary.
-plotQualityProfile(fnFs[1:2])
-plotQualityProfile(fnRs[1:2])
+#plotQualityProfile(fnFs[1:2])
+#plotQualityProfile(fnRs[1:2])
 
 # Identify the primers
 # Primers where given to me by Vincent Merkx
@@ -151,6 +153,7 @@ if(!identical(sample.names, sample.namesR)) stop("Forward and reverse files do n
 names(filtFs) <- sample.names
 names(filtRs) <- sample.names
 
+# Controleren op de output -> welke hebben we echt nodig?
 out %>% 
   data.frame() %>% 
   mutate(Samples = rownames(.),
@@ -182,8 +185,8 @@ fwd_qual_plots_filt
 
 # Error Rates Default
 
-errF <- learnErrors(cutFs, multithread = TRUE)
-errR <- learnErrors(cutRs, multithread = TRUE)
+errF <- learnErrors(filtFs, multithread = TRUE)
+errR <- learnErrors(filtRs, multithread = TRUE)
 
 plotErrors(errF, nominalQ = TRUE)
 plotErrors(errR, nominalQ = TRUE)
