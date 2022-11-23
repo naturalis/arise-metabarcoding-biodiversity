@@ -11,7 +11,10 @@ library(dplyr)
 packageVersion("dplyr")
 
 # Assign the path were the data is
+# Assign the path for cutadapt -> 
 path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata3"
+cutadapt <- "/Users/winnythoen/opt/anaconda3/bin/cutadapt"
+
 list.files(path)
 
 # In the files you have read 1 and read 2 (like forward and reversed reads)
@@ -21,8 +24,8 @@ fnRs <- sort(list.files(path, pattern = "_R2_", full.names = TRUE))
 
 # Quality plot tests -> takes a long time and only does a view.
 # Maybe interesting for in the paper. But little unnecessary.
-#plotQualityProfile(fnFs[1:2])
-#plotQualityProfile(fnRs[1:2])
+# plotQualityProfile(fnFs[1:2])
+# plotQualityProfile(fnRs[1:2])
 
 # Identify the primers
 # Primers where given to me by Vincent Merkx
@@ -58,12 +61,7 @@ REV.orients <- allOrients(REV)
 fnFs.filtN <- file.path(path, "filtN", basename(fnFs))
 fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 # We filter the reads for other characters than A/G/T/C
-#filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, minQ = 20, minLen = 200, multithread = TRUE)
 filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE)
-
-# This may not work, but it is worth a shot
-# fnFs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnFs))
-# fnRs.filtN <- file.path("/Users/winnythoen/Desktop/BioInformatica/Afstuderen/TestData/filtN", basename(fnRs))
 
 # Here we detect the primers
 primerHits <- function(primer, fn) {
@@ -85,12 +83,6 @@ rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs.filtN[[1]])
       REV.ForwardReads = sapply(REV.orients, primerHits, fn = fnFs.filtN[[1]]),
       REV.ReverseReads = sapply(REV.orients, primerHits, fn = fnRs.filtN[[1]]))
 
-
-# Install cutadapt for removing the primers: http://cutadapt.readthedocs.io/en/stable/index.html
-# Find where u saved cutadapt
-cutadapt <- "/Users/winnythoen/opt/anaconda3/bin/cutadapt"
-system2(cutadapt, args = "--version")
-
 # Make a new path where the reads can be saved after primer removal
 path.cut <- file.path(path, "cutadapt")
 if(!dir.exists(path.cut)) dir.create(path.cut)
@@ -104,6 +96,7 @@ FWD4.RC <- dada2:::rc(FWD4)
 FWD5.RC <- dada2:::rc(FWD5)
 REV.RC <- dada2::rc(REV)
 # Trim FWD and the reverse-complement of REV off of R1 (forward reads)
+# Only FWD1 is used, error rate default of 0.1 takes out all forward reads
 R1.flags <- paste("-g", FWD1, "-a", REV.RC) 
 # Trim REV and the reverse-complement of FWD off of R2 (reverse reads)
 R2.flags <- paste("-G", REV, "-A", FWD1.RC) 
@@ -139,7 +132,8 @@ sample.names <- unname(sapply(cutFs, get.sample.name))
 sample.namesR <- unname(sapply(cutRs, get.sample.name))
 head(sample.namesR)
 
-#plotQualityProfile(cutRs[1:2])
+# Moment for looking at some Quality plots
+# plotQualityProfile(cutRs[1:2])
 
 # Filter and trim
 filtFs <- file.path(path.cut, "filtered", basename(cutFs))
@@ -153,7 +147,7 @@ if(!identical(sample.names, sample.namesR)) stop("Forward and reverse files do n
 names(filtFs) <- sample.names
 names(filtRs) <- sample.names
 
-# Controleren op de output -> welke hebben we echt nodig?
+# Controleren op de output 
 out %>% 
   data.frame() %>% 
   mutate(Samples = rownames(.),
@@ -164,32 +158,13 @@ out %>%
             mean_remaining = paste0(round(mean(percent_kept), 2), "%"), 
             max_remaining = paste0(round(max(percent_kept), 2), "%"))
 
-if( length(fastqFs) <= 20) {
-  remaining_samplesF <-  fastqFs[
-    which(fastqFs %in% list.files(filtpathF))] # keep only samples that haven't been filtered out
-  remaining_samplesR <-  fastqRs[
-    which(fastqRs %in% list.files(filtpathR))] # keep only samples that haven't been filtered out
-  
-  fwd_qual_plots_filt <- plotQualityProfile(paste0(filtpathF, "/", remaining_samplesF))
-  rev_qual_plots_filt <- plotQualityProfile(paste0(filtpathR, "/", remaining_samplesR))
-} else {
-  remaining_samplesF <-  fastqFs[rand_samples][
-    which(fastqFs[rand_samples] %in% list.files(filtpathF))] # keep only samples that haven't been filtered out
-  remaining_samplesR <-  fastqRs[rand_samples][
-    which(fastqRs[rand_samples] %in% list.files(filtpathR))] # keep only samples that haven't been filtered out
-  fwd_qual_plots_filt <- plotQualityProfile(paste0(filtpathF, "/", remaining_samplesF))
-  rev_qual_plots_filt <- plotQualityProfile(paste0(filtpathR, "/", remaining_samplesR))
-}
-
-fwd_qual_plots_filt
-
 # Error Rates Default
 
-errF <- learnErrors(filtFs, multithread = TRUE)
-errR <- learnErrors(filtRs, multithread = TRUE)
+#errF <- learnErrors(filtFs, multithread = TRUE)
+#errR <- learnErrors(filtRs, multithread = TRUE)
 
-plotErrors(errF, nominalQ = TRUE)
-plotErrors(errR, nominalQ = TRUE)
+#plotErrors(errF, nominalQ = TRUE)
+#plotErrors(errR, nominalQ = TRUE)
 
 # Error Rates Option 1
 
@@ -431,4 +406,14 @@ errR_3 <- learnErrors(
   verbose = TRUE
 )
 
+# Show Results:
+
+# Optinal
+# plotQualityProfile(fnFs[1:2])
+# plotQualityProfile(fnRs[1:2])
+# To view primers: //.orients
+# plotQualityProfile(cutRs[1:2])
+
+# fwd_qual_plots_filt
+# rev_qual_plots_filt
 
