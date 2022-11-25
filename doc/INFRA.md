@@ -25,6 +25,19 @@ that corresponds with the public key previously injected on the server. **Note t
 connection attempts only succeed from behind an EduVPN connection authenticated as 
 a Naturalis member.**
 
+# Adding users
+
+_RStudio server_ follows a multi-user model. When accessing the server through
+the web browser, the user encounters a login screen. The credentials correspond
+with linux users and their passwords. Hence, users must be created:
+
+    sudo su
+    adduser --force-badname firstname.lastname
+    
+...where firstname.lastname follows the format of Naturalis accounts and email
+addresses. During this step, the user is prompted to enter a password. This
+password corresponds with the login through the server process.
+
 # Accessing _RStudio server_'s port
 
 _RStudio server_ is a webserver process that (by default) listens on
@@ -38,16 +51,3 @@ With the following command we enact tunneling as a background process that maps 
 
 When using an EduVPN connection as Naturalis and with this tunneling set up,
 it should be possible to access the running webserver at http://localhost:8080/
-
-# Adding users
-
-_RStudio server_ follows a multi-user model. When accessing the server through
-the web browser, the user encounters a login screen. The credentials correspond
-with linux users and their passwords. Hence, users must be created:
-
-    sudo su
-    adduser --force-badname firstname.lastname
-    
-...where firstname.lastname follows the format of Naturalis accounts and email
-addresses. During this step, the user is prompted to enter a password. This
-password corresponds with the login through the server process.
