@@ -1,3 +1,5 @@
+# Documentation
+
 This section contains documentation on the project and how to reproduce the
 conditions under which the calculations can be performed on a high-performance
 computing system. Consult the following subsections:
