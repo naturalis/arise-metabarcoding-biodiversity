@@ -1,5 +1,3 @@
-# Analyzing metabarcoding data using dada2
-
 This repository contains code and documentation for performing dada2 analyses
 on Illumina NovaSeq data on Naturalis's high-performance computing 
 infrastructure. The repository is laid out following the guidelines of 
