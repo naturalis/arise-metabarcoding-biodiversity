@@ -54,4 +54,5 @@ On this machine is installed:
 - [R](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/) (version 4.2.2)
 - [RStudio server](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
 - `git`
+- `libcurl4-openssl-dev`
 - The above R packages
