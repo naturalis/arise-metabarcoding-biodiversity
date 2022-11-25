@@ -35,8 +35,7 @@ its package manager pip, and [the R runtime](https://linuxize.com/post/how-to-in
     sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
     sudo apt install r-base
 
-Installation instructions for the RStudio server are here:
-https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/
+Installation instructions for the RStudio server, which also needs to be installed, are [here](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
 
 ## User-level configuration
 
