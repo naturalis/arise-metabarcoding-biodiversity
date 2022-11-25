@@ -25,6 +25,23 @@ that corresponds with the public key previously injected on the server. **Note t
 connection attempts only succeed from behind an EduVPN connection authenticated as 
 a Naturalis member.**
 
+# Basic installs
+
+To prepare the server for customization by the user to do the analyses, several 
+basic installations need to be performed. Here we setup git (for cloning our
+code onto the machine), curl (for fetching things from the web), python3 with
+its package manager pip, and [the R runtime](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/):
+
+    sudo apt install git libcurl4-openssl-dev python3 python3-pip
+    sudo apt install dirmngr gnupg apt-transport-https ca-certificates software-properties-common
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+    sudo apt install r-base
+
+
+- [RStudio server](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
+
+
 # Adding users
 
 _RStudio server_ follows a multi-user model. When accessing the server through
