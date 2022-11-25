@@ -35,3 +35,22 @@ Other installations:
 Workflow:
 -> stappenplan uitwerken
 
+# PART 2
+
+Implementing the pipeline on HPC infrastructure. In this part we scale
+up the analysis on a [MaaS](https://maas.io/how-it-works) machine. This 
+machine is loaded with the SSH public keys of project participants, who
+can access the machine as:
+
+    ssh -i id_rsa ubuntu@145.136.253.38
+ 
+where `id_rsa` is the path to the associated private key, which is 
+normally located at `~/.ssh/id_rsa`. *Note that this SSH connection can 
+only be made from behind an EduVPN connection logged in as Naturalis.*
+
+On this machine is installed:
+
+- [R](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/) (version 4.2.2)
+- [RStudio server](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
+- `git`
+- The above R packages
