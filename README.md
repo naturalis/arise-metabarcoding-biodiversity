@@ -1,9 +1,6 @@
 # COMPOSITION FILES
 
 results
-- BasicInfo.R > basic information from the datasets
-- DADA2.R > dada2 its workflow pipeline NovaSeq data
-- RarefactionCurve.R > Rarefaction curve script metabarcoding soil data from ±Leiden
 - Testdata3Uitwerkingen.docx > Results from test Novaseq data (50 random samples).  
                               Code plus printout from dada2 its workflow pipeline on test data.
 - *.png > results from error models tested on the NovaSeq data.
