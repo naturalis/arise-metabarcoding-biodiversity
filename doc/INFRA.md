@@ -34,7 +34,18 @@ user end (one of the usual ports for HTTP traffic) to 8787 on the server:
 
     ssh -i id_rsa -f -N ubuntu@145.136.253.38 -L 8080:145.136.253.38:8787
 
+When using an EduVPN connection as Naturalis and with the tunneling set up,
+it should be possible to access a running webserver at http://localhost:8080/
 
+# Adding users
 
-Because we will 
-be running R
+_RStudio server_ follows a multi-user model. When accessing the server through
+the web browser, the user encounters a login screen. The credentials correspond
+with linux users and their passwords. Hence, users must be created:
+
+    sudo su
+    adduser --force-badname firstname.lastname
+    
+...where firstname.lastname follows the format of Naturalis accounts and email
+addresses. During this step, the user is prompted to enter a password. This
+password corresponds with the login through the server process.
