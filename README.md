@@ -29,6 +29,7 @@ R packages:
 - Biostrings
 - magrittr
 - dplyr
+
 Other installations:
 - cutadapt (anaconda: )
 
