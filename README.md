@@ -54,5 +54,5 @@ On this machine is installed:
 - [R](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/) (version 4.2.2)
 - [RStudio server](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
 - `sudo apt install git libcurl4-openssl-dev python3 python3-pip`
-- `python3 -m pip install --user --upgrade cutadapt` # installs to /home/ubuntu/.local/bin, update $PATH
-- The above R packages
+- `python3 -m pip install --user --upgrade cutadapt` # https://cutadapt.readthedocs.io/en/stable/installation.html
+- The above R packages, those flagged with (BC) via `Bioc::Manager::install()`, others via `install.packages()`
