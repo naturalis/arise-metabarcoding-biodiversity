@@ -1,3 +1,10 @@
+## Introduction
+
+This document records how the infrastructure needs to be configured to 
+allow users to run dada2 analyses on Naturalis's HPC infra. The 
+[background](#Background) section is intended for people setting up a new
+server. The section below it describes how to [add users](#User-level configuration).
+
 ## Background
 
 ### HPC Hardware
