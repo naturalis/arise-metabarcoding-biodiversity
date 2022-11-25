@@ -8,12 +8,6 @@ results
                               Code plus printout from dada2 its workflow pipeline on test data.
 - *.png > results from error models tested on the NovaSeq data.
 
-data
-- ARISE_Sample information_logbook (2).xlsx > sample information from the soil data (locations ect)
-- ASVtab_raw.csv > csv data from the soil data
-- OTU97tab_tax.csv > OTU table from the soil data
-- Primers.xlsx > Primers used by BaseClear for the NovaSeq data
-
 # PART 1
 
 DADA2 ITS pipeline workflow for Novaseq fungi data
