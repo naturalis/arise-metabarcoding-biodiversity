@@ -13,29 +13,31 @@ Here we choose machine `netdc-bms-c11h.maas`. This machine has 56 cores,
 # SSH Access
 
 The newly deployed machine runs Ubuntu 20.04LTS and contains the SSH public
-keys of the members of the `nmri` user group. If others are going to use
-the machine, their public SSH key needs to be added to `/home/ubuntu/.ssh/authorized_keys`.
-The machine can then be accessed as:
+keys of the members of the `nmri` user group. Any others that are going to use
+the machine as well will have their public SSH key added to 
+`/home/ubuntu/.ssh/authorized_keys` on the server. The machine can then be 
+accessed as:
 
     ssh -i id_rsa ubuntu@145.136.253.38
 
-...where `id_rsa` specifies the location of the private key that corresponds
-with the public key previously injected in the machine. **Note that connection
-attempts only succeed from behind an EduVPN connection authenticated as a Naturalis
-member.**
+...where `id_rsa` specifies the location of the private key on the local machine 
+that corresponds with the public key previously injected on the server. **Note that 
+connection attempts only succeed from behind an EduVPN connection authenticated as 
+a Naturalis member.**
 
 # Accessing _RStudio server_'s port
 
 _RStudio server_ is a webserver process that (by default) listens on
-port 8787. This is an unusual port number that is currently blocked by the
-EduVPN configuration. This can circumvented by SSH tunneling. With the following
-command we enact tunneling as a background process that maps port 8080 on the
-user end (one of the usual ports for HTTP traffic) to 8787 on the server:
+port 8787. This is an unusual port number that is normally blocked by the
+EduVPN configuration. This can be circumvented by 
+[SSH tunneling](https://www.tecmint.com/create-ssh-tunneling-port-forwarding-in-linux/).
+With the following command we enact tunneling as a background process that maps port 
+8080 on the user end (one of the usual ports for HTTP traffic) to 8787 on the server:
 
     ssh -i id_rsa -f -N ubuntu@145.136.253.38 -L 8080:145.136.253.38:8787
 
-When using an EduVPN connection as Naturalis and with the tunneling set up,
-it should be possible to access a running webserver at http://localhost:8080/
+When using an EduVPN connection as Naturalis and with this tunneling set up,
+it should be possible to access the running webserver at http://localhost:8080/
 
 # Adding users
 
