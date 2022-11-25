@@ -24,9 +24,9 @@ Basic information from the data:
 
 R packages:
 - BiocManager (: BiocManager::install("dada2", version = "3.8"))
-- dada2
-- ShortRead
-- Biostrings
+- dada2 (BC)
+- ShortRead (BC)
+- Biostrings (BC)
 - magrittr
 - dplyr
 
@@ -53,6 +53,6 @@ On this machine is installed:
 
 - [R](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/) (version 4.2.2)
 - [RStudio server](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
-- `git`
-- `libcurl4-openssl-dev`
+- `sudo apt install git libcurl4-openssl-dev python3 python3-pip`
+- `python3 -m pip install --user --upgrade cutadapt` # installs to /home/ubuntu/.local/bin, update $PATH
 - The above R packages
