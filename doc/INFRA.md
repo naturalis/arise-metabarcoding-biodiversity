@@ -1,4 +1,6 @@
-# HPC Hardware
+# Background
+
+## HPC Hardware
 
 The analyses that are described in this repo require fairly generous
 resources in storage, RAM and CPU. Hence, we perform the calculations
@@ -10,7 +12,25 @@ which includes selected members from ICT as well as the bioinformaticians.
 Here we choose machine `netdc-bms-c11h.maas`. This machine has 56 cores,
 384GB RAM and 20TB storage space.
 
-# SSH Access
+## Basic installs
+
+To prepare the server for customization by the user to do the analyses, several 
+basic installations need to be performed. Here we setup git (for cloning our
+code onto the machine), curl (for fetching things from the web), python3 with
+its package manager pip, and [the R runtime](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/):
+
+    sudo apt install git libcurl4-openssl-dev python3 python3-pip
+    sudo apt install dirmngr gnupg apt-transport-https ca-certificates software-properties-common
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+    sudo apt install r-base
+
+Installation instructions for the RStudio server are here:
+https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/
+
+# User-level configuration
+
+## SSH Access
 
 The newly deployed machine runs Ubuntu 20.04LTS and contains the SSH public
 keys of the members of the `nmri` user group. Any others that are going to use
@@ -25,24 +45,7 @@ that corresponds with the public key previously injected on the server. **Note t
 connection attempts only succeed from behind an EduVPN connection authenticated as 
 a Naturalis member.**
 
-# Basic installs
-
-To prepare the server for customization by the user to do the analyses, several 
-basic installations need to be performed. Here we setup git (for cloning our
-code onto the machine), curl (for fetching things from the web), python3 with
-its package manager pip, and [the R runtime](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/):
-
-    sudo apt install git libcurl4-openssl-dev python3 python3-pip
-    sudo apt install dirmngr gnupg apt-transport-https ca-certificates software-properties-common
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-    sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
-    sudo apt install r-base
-
-
-- [RStudio server](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
-
-
-# Adding users
+## Adding users
 
 _RStudio server_ follows a multi-user model. When accessing the server through
 the web browser, the user encounters a login screen. The credentials correspond
@@ -55,7 +58,7 @@ with linux users and their passwords. Hence, users must be created:
 addresses. During this step, the user is prompted to enter a password. This
 password corresponds with the login through the server process.
 
-# Accessing _RStudio server_'s port
+## Accessing _RStudio server_'s port
 
 _RStudio server_ is a webserver process that (by default) listens on
 port 8787. This is an unusual port number that is normally blocked by the
