@@ -5,10 +5,9 @@ This section contains the following intermediate and result files:
 - [OTU97tab_tax.csv](OTU97tab_tax.csv) - OTU table from the soil data
 - [Primers.xlsx](Primers.xlsx) - Primers used by BaseClear for NovaSeq platform
 
-Prepare your data:
+### Prepare your data:
 
-To use this pipeline you need to know the primers that has been used and then seperate them by markers. 
-The data we use is seperated in 4 different kind of markers, they are presented in this table.
+To use this pipeline you need to know the primers that has been used and then seperate them by markers. The data we use is seperated in 4 different kind of markers, they are presented in this table.
 
 | Markers | #I7: 1 – 12    | #I7: 13 – 24    | #I7: 25 – 36 | #I7: 37 – 48 |
 | :-----: | :---: | :---: | :---: | :---: |
@@ -18,3 +17,8 @@ The data we use is seperated in 4 different kind of markers, they are presented 
 | I5: 25 – 32 | 16s locatie 2 21022-375801-002 NI035   | 16s locatie 4 21022-375801-004 NI037   |  |  |
 
 It is important to seprate the data before u run the pipeline. 
+To seperate the data:
+
+    find . -name "*NI030*" -exec gmv -t ./ITS {} +
+
+Where `"*NI030*"` is the marker that we wanted to move to `./ITS` directory.
