@@ -1,14 +1,9 @@
 # load the required packages for dada2
 library(dada2)
-packageVersion("dada2")
 library(ShortRead)
-packageVersion("ShortRead")
 library(Biostrings)
-packageVersion("Biostrings")
 library(magrittr)
-packageVersion("magrittr")
 library(dplyr)
-packageVersion("dplyr")
 
 # Assign the path were the data is
 # Assign the path for cutadapt -> 
