@@ -96,6 +96,8 @@ REV.RC <- dada2::rc(REV)
 R1.flags <- paste("-g", FWD1, "-a", REV.RC) 
 # Trim REV and the reverse-complement of FWD off of R2 (reverse reads)
 R2.flags <- paste("-G", REV, "-A", FWD1.RC) 
+# Only FWD1 is used, the default error rate is 0.1 which means that the 
+# difference between all different primers are covered
 
 # Function for removing the primer
 for(i in seq_along(fnFs)) {
