@@ -22,3 +22,13 @@ To seperate the data:
     find . -name "*NI030*" -exec gmv -t ./ITS {} +
 
 Where `"*NI030*"` is the marker that we wanted to move to `./ITS` directory.
+Use this to move all needed data with the right markers to a specific directory. This will be the data that we will be using for this pipeline. 
+
+### Set up data on the server
+
+To use the server we need to set up the data on the MaaS server. To do so use scp
+
+    scp *.gz ubuntu@145.136.253.38:winny.thoen/
+
+Where `*.gz` are all the files within the current directory and `ubuntu@145.136.253.38:winny.thoen/` is the directory on the MaaS server.
+-> dit moet nog aangepast worden want dit is nog niet de goede locatie!!

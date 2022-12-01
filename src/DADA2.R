@@ -6,9 +6,10 @@ library(magrittr)
 library(dplyr)
 
 # Assign the path were the data is
-# Assign the path for cutadapt -> 
-path <- "/Users/winnythoen/Desktop/BioInformatica/Afstuderen/Testdata3"
-cutadapt <- "/Users/winnythoen/opt/anaconda3/bin/cutadapt"
+# Assign the path for cutadapt -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
+path <- "?"
+cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
+system2(cutadapt, args = "--version")
 
 list.files(path)
 
