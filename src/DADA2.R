@@ -7,7 +7,7 @@ library(dplyr)
 
 # Assign the path were the data is
 # Assign the path for cutadapt -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
-path <- "?"
+path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/Testdata"
 cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
 system2(cutadapt, args = "--version")
 
@@ -20,7 +20,7 @@ fnRs <- sort(list.files(path, pattern = "_R2_", full.names = TRUE))
 
 # Quality plot tests -> takes a long time and only does a view.
 # Maybe interesting for in the paper. But little unnecessary.
-# plotQualityProfile(fnFs[1:2])
+plotQualityProfile(fnFs[1:2])
 # plotQualityProfile(fnRs[1:2])
 
 # Identify the primers
