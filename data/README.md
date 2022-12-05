@@ -32,3 +32,5 @@ To use the server we need to set up the data on the MaaS server. To do so use sc
 
 Where `*.gz` are all the files within the current directory and `ubuntu@145.136.253.38:/home/winny.thoen/arise-metabarcoding-biodiversity/` is the directory on the MaaS server.
 After moving the data check the permissions before using the dada2 pipeline. Is necessary change the permissions using `chmod`.
+
+
