@@ -225,7 +225,6 @@ loessErrfun_mod1 <- function(trans) {
 }
 
 # check what this looks like
-
 errR_1 <- learnErrors(
   filtFs,
   multithread = TRUE,
@@ -233,7 +232,7 @@ errR_1 <- learnErrors(
   errorEstimationFunction = loessErrfun_mod1,
   verbose = TRUE
 )
-
+  
 errF_1 <- learnErrors(
   filtRs,
   multithread = TRUE,
@@ -241,6 +240,9 @@ errF_1 <- learnErrors(
   errorEstimationFunction = loessErrfun_mod1,
   verbose = TRUE
 )
+
+plotErrors(errF_1, nominalQ = TRUE)
+plotErrors(errR_1, nominalQ = TRUE)
 
 # Option 2
 
@@ -312,10 +314,6 @@ errF_2 <- learnErrors(
   verbose = TRUE
 )
 
-plotErrors(errF_2, nominalQ = TRUE)
-plotErrors(errR_2, nominalQ = TRUE)
-
-
 errR_2 <- learnErrors(
   filtRs,
   multithread = TRUE,
@@ -323,6 +321,9 @@ errR_2 <- learnErrors(
   errorEstimationFunction = loessErrfun_mod2,
   verbose = TRUE
 )
+
+plotErrors(errF_2, nominalQ = TRUE)
+plotErrors(errR_2, nominalQ = TRUE)
 
 # Code 3
 loessErrfun_mod3 <- function(trans) {
@@ -403,6 +404,9 @@ errR_3 <- learnErrors(
   errorEstimationFunction = loessErrfun_mod3,
   verbose = TRUE
 )
+
+plotErrors(errF_3, nominalQ = TRUE)
+plotErrors(errR_3, nominalQ = TRUE)
 
 # Show Results:
 
