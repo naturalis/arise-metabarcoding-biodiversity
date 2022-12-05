@@ -16,6 +16,11 @@ Install cutadapt : http://cutadapt.readthedocs.io/en/stable/index.html
 
 After installing cutadapt it will show the directory where it is saved, use that path for in your R script.
 
+    if (!require("BiocManager", quietly = TRUE))
+      install.packages("BiocManager")
+
+    BiocManager::install("BiocParallel")
+
 ### Filter your data
 
 The code used to filter my data:

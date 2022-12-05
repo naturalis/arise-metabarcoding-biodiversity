@@ -5,3 +5,7 @@
 .DS_Store
 *.Rproj
 data/Testdata/
+data/Testdata/ITS
+data/Testdata/ITS/cutadapt
+data/Testdata/ITS/filtN
+data/Testdata/ITS/cutadapt/filtered

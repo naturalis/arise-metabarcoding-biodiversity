@@ -5,9 +5,14 @@ library(Biostrings)
 library(magrittr)
 library(dplyr)
 
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("BiocParallel")
+
 # Assign the path were the data is
 # Assign the path for cutadapt -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
-path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/Testdata"
+path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/Testdata/ITS"
 cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
 system2(cutadapt, args = "--version")
 

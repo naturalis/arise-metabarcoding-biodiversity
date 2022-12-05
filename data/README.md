@@ -16,10 +16,10 @@ To use this pipeline you need to know the primers that has been used and then se
 | I5: 17 – 24 | 16s locatie 1 21022-375801-001 NI034   | 16s locatie 3 21022-375801-003 NI036   |  |  |
 | I5: 25 – 32 | 16s locatie 2 21022-375801-002 NI035   | 16s locatie 4 21022-375801-004 NI037   |  |  |
 
-It is important to seprate the data before u run the pipeline. 
+It is important to seprate the data before u run the pipeline. In this case we are ging to seperate the data by ITS markers: `NI030, NI031, NI032, NI033`
 To seperate the data:
 
-    find . -name "*NI030*" -exec gmv -t ./ITS {} +
+    find . -name "*NI030*" -exec mv -t ./ITS {} +
 
 Where `"*NI030*"` is the marker that we wanted to move to `./ITS` directory.
 Use this to move all needed data with the right markers to a specific directory. This will be the data that we will be using for this pipeline. 
@@ -28,7 +28,7 @@ Use this to move all needed data with the right markers to a specific directory.
 
 To use the server we need to set up the data on the MaaS server. To do so use scp
 
-    scp *.gz ubuntu@145.136.253.38:winny.thoen/
+    scp *.gz ubuntu@145.136.253.38:/home/winny.thoen/arise-metabarcoding-biodiversity/
 
-Where `*.gz` are all the files within the current directory and `ubuntu@145.136.253.38:winny.thoen/` is the directory on the MaaS server.
--> dit moet nog aangepast worden want dit is nog niet de goede locatie!!
+Where `*.gz` are all the files within the current directory and `ubuntu@145.136.253.38:/home/winny.thoen/arise-metabarcoding-biodiversity/` is the directory on the MaaS server.
+After moving the data check the permissions before using the dada2 pipeline. Is necessary change the permissions using `chmod`.
