@@ -243,6 +243,7 @@ errF_1 <- learnErrors(
 
 plotErrors(errF_1, nominalQ = TRUE)
 plotErrors(errR_1, nominalQ = TRUE)
+#plotErrors(errR_1)
 
 # Option 2
 
