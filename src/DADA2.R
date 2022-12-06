@@ -399,7 +399,7 @@ errR_3 <- learnErrors(
   verbose = TRUE
 )
 
-plotErrors(errF_1, nominalQ = TRUE)
+errF_1_plot <- plotErrors(errF_1, nominalQ = TRUE)
 plotErrors(errR_1, nominalQ = TRUE)
 
 plotErrors(errF_2, nominalQ = TRUE)
@@ -407,6 +407,8 @@ plotErrors(errR_2, nominalQ = TRUE)
 
 plotErrors(errF_3, nominalQ = TRUE)
 plotErrors(errR_3, nominalQ = TRUE)
+
+ggsave('errF_1.png', errF_1_plot) 
 
 # Show Results:
 
