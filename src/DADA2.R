@@ -20,7 +20,7 @@ fnRs <- sort(list.files(path, pattern = "_R2_", full.names = TRUE))
 
 # Quality plot tests -> takes a long time and only does a view.
 # Maybe interesting for in the paper. But little unnecessary.
-plotQualityProfile(fnFs[1:2])
+# plotQualityProfile(fnFs[1:2])
 # plotQualityProfile(fnRs[1:2])
 
 # Identify the primers
@@ -399,7 +399,7 @@ errR_3 <- learnErrors(
   verbose = TRUE
 )
 
-errF_1_plot <- plotErrors(errF_1, nominalQ = TRUE)
+plotErrors(errF_1, nominalQ = TRUE)
 plotErrors(errR_1, nominalQ = TRUE)
 
 plotErrors(errF_2, nominalQ = TRUE)
@@ -407,8 +407,6 @@ plotErrors(errR_2, nominalQ = TRUE)
 
 plotErrors(errF_3, nominalQ = TRUE)
 plotErrors(errR_3, nominalQ = TRUE)
-
-ggsave('errF_1.png', errF_1_plot) 
 
 # Show Results:
 
