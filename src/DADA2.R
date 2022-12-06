@@ -408,6 +408,21 @@ plotErrors(errR_2, nominalQ = TRUE)
 plotErrors(errF_3, nominalQ = TRUE)
 plotErrors(errR_3, nominalQ = TRUE)
 
+# Dereplicate identical reads
+# This reduces the running time
+
+derepFs <- derepFastq(filtFs, verbose = TRUE)
+derepRs <- derepFastq(filtRs, verbose = TRUE)
+# Name the derep-class objects by the sample names
+names(derepFs) <- sample.names
+names(derepRs) <- sample.names
+
+# Sample Inference 
+
+dadaFs <- dada(derepFs, err = errF_2, multithread = TRUE)
+dadaRs <- dada(derepRs, err = errR_2, multithread = TRUE)
+
+
 # Show Results:
 
 # Optinal
