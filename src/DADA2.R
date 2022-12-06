@@ -241,10 +241,6 @@ errF_1 <- learnErrors(
   verbose = TRUE
 )
 
-plotErrors(errF_1, nominalQ = TRUE)
-plotErrors(errR_1, nominalQ = TRUE)
-#plotErrors(errR_1)
-
 # Option 2
 
 loessErrfun_mod2 <- function(trans) {
@@ -322,9 +318,6 @@ errR_2 <- learnErrors(
   errorEstimationFunction = loessErrfun_mod2,
   verbose = TRUE
 )
-
-plotErrors(errF_2, nominalQ = TRUE)
-plotErrors(errR_2, nominalQ = TRUE)
 
 # Code 3
 loessErrfun_mod3 <- function(trans) {
@@ -405,6 +398,12 @@ errR_3 <- learnErrors(
   errorEstimationFunction = loessErrfun_mod3,
   verbose = TRUE
 )
+
+plotErrors(errF_1, nominalQ = TRUE)
+plotErrors(errR_1, nominalQ = TRUE)
+
+plotErrors(errF_2, nominalQ = TRUE)
+plotErrors(errR_2, nominalQ = TRUE)
 
 plotErrors(errF_3, nominalQ = TRUE)
 plotErrors(errR_3, nominalQ = TRUE)
