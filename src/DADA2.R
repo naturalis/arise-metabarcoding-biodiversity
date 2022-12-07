@@ -422,6 +422,26 @@ names(derepRs) <- sample.names
 dadaFs <- dada(derepFs, err = errF_2, multithread = TRUE)
 dadaRs <- dada(derepRs, err = errR_2, multithread = TRUE)
 
+# Merge paired reads
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=TRUE)
+
+# Construct sequence table
+seqtab <- makeSequenceTable(mergers)
+dim(seqtab)
+
+# Remove chimeras
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+table(nchar(getSequences(seqtab.nochim)))
+
+# Track reads through the pipeline
+
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, 
+                                                                       getN), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", 
+                     "nonchim")
+rownames(track) <- sample.names
+head(track)
 
 # Show Results:
 
