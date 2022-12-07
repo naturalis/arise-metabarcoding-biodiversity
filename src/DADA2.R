@@ -443,6 +443,9 @@ colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged",
 rownames(track) <- sample.names
 head(track)
 
+# Assign taxonomy
+
+
 # Show Results:
 
 # Optinal
