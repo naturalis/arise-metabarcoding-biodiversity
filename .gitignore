@@ -7,7 +7,3 @@
 data/Testdata/
 data/raw_sequences_NovaSeq/
 data/sh_general_release_dynamic_29.11.2022.fasta
-data/Testdata/ITS
-data/Testdata/ITS/cutadapt
-data/Testdata/ITS/filtN
-data/Testdata/ITS/cutadapt/filtered

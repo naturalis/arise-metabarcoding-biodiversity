@@ -7,42 +7,32 @@ library(dplyr)
 
 # Assign the path were the data is
 # Assign the path for cutadapt -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
-path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/Testdata/ITS"
+path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/raw_sequences_NovaSeq"
 cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
 system2(cutadapt, args = "--version")
 
+# Import all functions
+source("/home/winny.thoen/arise-metabarcoding-biodiversity/src/FunctionsDADA2.R")
+
 list.files(path)
 
-# In the files you have read 1 and read 2 (like forward and reversed reads)
-# We have to separate the two different reads.
+# We have to separate the two different reads (read1 and read2)
 fnFs <- sort(list.files(path, pattern = "_R1_", full.names = TRUE))
 fnRs <- sort(list.files(path, pattern = "_R2_", full.names = TRUE))
 
-# Quality plot tests -> takes a long time and only does a view.
-# Maybe interesting for in the paper. But little unnecessary.
+# Quality plot tests per two reads. To view different read change [..:..]
+# Maybe interesting for in the paper ect
 # plotQualityProfile(fnFs[1:2])
 # plotQualityProfile(fnRs[1:2])
 
 # Identify the primers
-# Primers where given to me by Vincent Merkx
 # The forward primers are all the same primer, except for the barcodes/adapters
-
 FWD1 <- "CTAGACTCGTCATCGATGAAGAACGCAG"
 FWD2 <- "CTAGACTCGTCAACGATGAAGAACGCAG"
 FWD3 <- "CTAGACTCGTCACCGATGAAGAACGCAG"
 FWD4 <- "CTAGACTCGTCATCGATGAAGAACGTAG"
 FWD5 <- "CTAGACTCGTCATCGATGAAGAACGTGG"
 REV <- "TCCTSCGCTTATTGATATGC"
-
-# This function makes a forward, reversed, compliment and reversed compliment primer of every primer given
-
-allOrients <- function(primer) {
-  require(Biostrings)
-  dna <- DNAString(primer)
-  orients <- c(Forward = dna, Complement = complement(dna), Reverse = reverse(dna),
-               RevComp = reverseComplement(dna))
-  return(sapply(orients, toString))
-}
 
 # All the primers (in all orders) are saved in .orients
 # To view: //.orients
@@ -58,12 +48,6 @@ fnFs.filtN <- file.path(path, "filtN", basename(fnFs))
 fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 # We filter the reads for other characters than A/G/T/C
 filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE)
-
-# Here we detect the primers
-primerHits <- function(primer, fn) {
-  nhits <- vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
-  return(sum(nhits > 0))
-}
 
 # Here we make a table of the primers found and how many
 rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs.filtN[[1]]),
@@ -99,7 +83,7 @@ R2.flags <- paste("-G", REV, "-A", FWD1.RC)
 # Only FWD1 is used, the default error rate is 0.1 which means that the 
 # difference between all different primers are covered
 
-# Function for removing the primer
+# Removing the primers from the reads
 for(i in seq_along(fnFs)) {
   system2(cutadapt, args = c(R1.flags, R2.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
                              "-o", fnFs.cut[i], "-p", fnRs.cut[i], # output files
@@ -125,12 +109,11 @@ cutFs <- sort(list.files(path.cut, pattern = "_R1_", full.names = TRUE))
 cutRs <- sort(list.files(path.cut, pattern = "_R2_", full.names = TRUE))
 
 # Extract sample names, assuming filenames have format:
-get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
 sample.names <- unname(sapply(cutFs, get.sample.name))
 sample.namesR <- unname(sapply(cutRs, get.sample.name))
 head(sample.namesR)
 
-# Moment for looking at some Quality plots
+# Now you could look at some Quality plots:
 # plotQualityProfile(cutRs[1:2])
 
 # Filter and trim
@@ -141,6 +124,7 @@ out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxEE=c(2,2), truncLen=c(240,
                      minLen = 200, compress=TRUE, verbose=TRUE, multithread=TRUE)  # on windows, set multithread = FALSE
 head(out)
 
+# Double check for identical sample names
 if(!identical(sample.names, sample.namesR)) stop("Forward and reverse files do not match.")
 names(filtFs) <- sample.names
 names(filtRs) <- sample.names
@@ -157,74 +141,14 @@ out %>%
             max_remaining = paste0(round(max(percent_kept), 2), "%"))
 
 # Error Rates Default
-
 #errF <- learnErrors(filtFs, multithread = TRUE)
 #errR <- learnErrors(filtRs, multithread = TRUE)
 
 #plotErrors(errF, nominalQ = TRUE)
 #plotErrors(errR, nominalQ = TRUE)
 
-# Error Rates Option 1
+# Error Rates Outcome
 
-loessErrfun_mod1 <- function(trans) {
-  qq <- as.numeric(colnames(trans))
-  est <- matrix(0, nrow=0, ncol=length(qq))
-  for(nti in c("A","C","G","T")) {
-    for(ntj in c("A","C","G","T")) {
-      if(nti != ntj) {
-        errs <- trans[paste0(nti,"2",ntj),]
-        tot <- colSums(trans[paste0(nti,"2",c("A","C","G","T")),])
-        rlogp <- log10((errs+1)/tot)  # 1 psuedocount for each err, but if tot=0 will give NA
-        rlogp[is.infinite(rlogp)] <- NA
-        df <- data.frame(q=qq, errs=errs, tot=tot, rlogp=rlogp)
-        
-        # original
-        # ###! mod.lo <- loess(rlogp ~ q, df, weights=errs) ###!
-        # mod.lo <- loess(rlogp ~ q, df, weights=tot) ###!
-        # #        mod.lo <- loess(rlogp ~ q, df)
-        
-        # Gulliem Salazar's solution
-        # https://github.com/benjjneb/dada2/issues/938
-        mod.lo <- loess(rlogp ~ q, df, weights = log10(tot),span = 2)
-        
-        pred <- predict(mod.lo, qq)
-        maxrli <- max(which(!is.na(pred)))
-        minrli <- min(which(!is.na(pred)))
-        pred[seq_along(pred)>maxrli] <- pred[[maxrli]]
-        pred[seq_along(pred)<minrli] <- pred[[minrli]]
-        est <- rbind(est, 10^pred)
-      } # if(nti != ntj)
-    } # for(ntj in c("A","C","G","T"))
-  } # for(nti in c("A","C","G","T"))
-  
-  # HACKY
-  MAX_ERROR_RATE <- 0.25
-  MIN_ERROR_RATE <- 1e-7
-  est[est>MAX_ERROR_RATE] <- MAX_ERROR_RATE
-  est[est<MIN_ERROR_RATE] <- MIN_ERROR_RATE
-  
-  # enforce monotonicity
-  # https://github.com/benjjneb/dada2/issues/791
-  estorig <- est
-  est <- est %>%
-    data.frame() %>%
-    mutate_all(funs(case_when(. < X40 ~ X40,
-                              . >= X40 ~ .))) %>% as.matrix()
-  rownames(est) <- rownames(estorig)
-  colnames(est) <- colnames(estorig)
-  
-  # Expand the err matrix with the self-transition probs
-  err <- rbind(1-colSums(est[1:3,]), est[1:3,],
-               est[4,], 1-colSums(est[4:6,]), est[5:6,],
-               est[7:8,], 1-colSums(est[7:9,]), est[9,],
-               est[10:12,], 1-colSums(est[10:12,]))
-  rownames(err) <- paste0(rep(c("A","C","G","T"), each=4), "2", c("A","C","G","T"))
-  colnames(err) <- colnames(trans)
-  # Return
-  return(err)
-}
-
-# check what this looks like
 errR_1 <- learnErrors(
   filtFs,
   multithread = TRUE,
@@ -242,66 +166,6 @@ errF_1 <- learnErrors(
 )
 
 # Option 2
-
-loessErrfun_mod2 <- function(trans) {
-  qq <- as.numeric(colnames(trans))
-  est <- matrix(0, nrow=0, ncol=length(qq))
-  for(nti in c("A","C","G","T")) {
-    for(ntj in c("A","C","G","T")) {
-      if(nti != ntj) {
-        errs <- trans[paste0(nti,"2",ntj),]
-        tot <- colSums(trans[paste0(nti,"2",c("A","C","G","T")),])
-        rlogp <- log10((errs+1)/tot)  # 1 psuedocount for each err, but if tot=0 will give NA
-        rlogp[is.infinite(rlogp)] <- NA
-        df <- data.frame(q=qq, errs=errs, tot=tot, rlogp=rlogp)
-        
-        # original
-        # ###! mod.lo <- loess(rlogp ~ q, df, weights=errs) ###!
-        mod.lo <- loess(rlogp ~ q, df, weights=tot) ###!
-        # #        mod.lo <- loess(rlogp ~ q, df)
-        
-        # Gulliem Salazar's solution
-        # https://github.com/benjjneb/dada2/issues/938
-        # mod.lo <- loess(rlogp ~ q, df, weights = log10(tot),span = 2)
-        
-        pred <- predict(mod.lo, qq)
-        maxrli <- max(which(!is.na(pred)))
-        minrli <- min(which(!is.na(pred)))
-        pred[seq_along(pred)>maxrli] <- pred[[maxrli]]
-        pred[seq_along(pred)<minrli] <- pred[[minrli]]
-        est <- rbind(est, 10^pred)
-      } # if(nti != ntj)
-    } # for(ntj in c("A","C","G","T"))
-  } # for(nti in c("A","C","G","T"))
-  
-  # HACKY
-  MAX_ERROR_RATE <- 0.25
-  MIN_ERROR_RATE <- 1e-7
-  est[est>MAX_ERROR_RATE] <- MAX_ERROR_RATE
-  est[est<MIN_ERROR_RATE] <- MIN_ERROR_RATE
-  
-  # enforce monotonicity
-  # https://github.com/benjjneb/dada2/issues/791
-  estorig <- est
-  est <- est %>%
-    data.frame() %>%
-    mutate_all(funs(case_when(. < X40 ~ X40,
-                              . >= X40 ~ .))) %>% as.matrix()
-  rownames(est) <- rownames(estorig)
-  colnames(est) <- colnames(estorig)
-  
-  # Expand the err matrix with the self-transition probs
-  err <- rbind(1-colSums(est[1:3,]), est[1:3,],
-               est[4,], 1-colSums(est[4:6,]), est[5:6,],
-               est[7:8,], 1-colSums(est[7:9,]), est[9,],
-               est[10:12,], 1-colSums(est[10:12,]))
-  rownames(err) <- paste0(rep(c("A","C","G","T"), each=4), "2", c("A","C","G","T"))
-  colnames(err) <- colnames(trans)
-  # Return
-  return(err)
-}
-
-
 # check what this looks like
 errF_2 <- learnErrors(
   filtFs,
@@ -319,68 +183,7 @@ errR_2 <- learnErrors(
   verbose = TRUE
 )
 
-# Code 3
-loessErrfun_mod3 <- function(trans) {
-  qq <- as.numeric(colnames(trans))
-  est <- matrix(0, nrow=0, ncol=length(qq))
-  for(nti in c("A","C","G","T")) {
-    for(ntj in c("A","C","G","T")) {
-      if(nti != ntj) {
-        errs <- trans[paste0(nti,"2",ntj),]
-        tot <- colSums(trans[paste0(nti,"2",c("A","C","G","T")),])
-        rlogp <- log10((errs+1)/tot)  # 1 psuedocount for each err, but if tot=0 will give NA
-        rlogp[is.infinite(rlogp)] <- NA
-        df <- data.frame(q=qq, errs=errs, tot=tot, rlogp=rlogp)
-        
-        # original
-        # ###! mod.lo <- loess(rlogp ~ q, df, weights=errs) ###!
-        # mod.lo <- loess(rlogp ~ q, df, weights=tot) ###!
-        # #        mod.lo <- loess(rlogp ~ q, df)
-        
-        # Gulliem Salazar's solution
-        # https://github.com/benjjneb/dada2/issues/938
-        # mod.lo <- loess(rlogp ~ q, df, weights = log10(tot),span = 2)
-        
-        # only change the weights
-        mod.lo <- loess(rlogp ~ q, df, weights = log10(tot))
-        
-        pred <- predict(mod.lo, qq)
-        maxrli <- max(which(!is.na(pred)))
-        minrli <- min(which(!is.na(pred)))
-        pred[seq_along(pred)>maxrli] <- pred[[maxrli]]
-        pred[seq_along(pred)<minrli] <- pred[[minrli]]
-        est <- rbind(est, 10^pred)
-      } # if(nti != ntj)
-    } # for(ntj in c("A","C","G","T"))
-  } # for(nti in c("A","C","G","T"))
-  
-  # HACKY
-  MAX_ERROR_RATE <- 0.25
-  MIN_ERROR_RATE <- 1e-7
-  est[est>MAX_ERROR_RATE] <- MAX_ERROR_RATE
-  est[est<MIN_ERROR_RATE] <- MIN_ERROR_RATE
-  
-  # enforce monotonicity
-  # https://github.com/benjjneb/dada2/issues/791
-  estorig <- est
-  est <- est %>%
-    data.frame() %>%
-    mutate_all(funs(case_when(. < X40 ~ X40,
-                              . >= X40 ~ .))) %>% as.matrix()
-  rownames(est) <- rownames(estorig)
-  colnames(est) <- colnames(estorig)
-  
-  # Expand the err matrix with the self-transition probs
-  err <- rbind(1-colSums(est[1:3,]), est[1:3,],
-               est[4,], 1-colSums(est[4:6,]), est[5:6,],
-               est[7:8,], 1-colSums(est[7:9,]), est[9,],
-               est[10:12,], 1-colSums(est[10:12,]))
-  rownames(err) <- paste0(rep(c("A","C","G","T"), each=4), "2", c("A","C","G","T"))
-  colnames(err) <- colnames(trans)
-  # Return
-  return(err)
-}
-
+# Option 3
 # check what this looks like
 errF_3 <- learnErrors(
   filtFs,
@@ -399,6 +202,7 @@ errR_3 <- learnErrors(
   verbose = TRUE
 )
 
+# Create all plots
 plotErrors(errF_1, nominalQ = TRUE)
 plotErrors(errR_1, nominalQ = TRUE)
 
@@ -434,8 +238,6 @@ seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE
 table(nchar(getSequences(seqtab.nochim)))
 
 # Track reads through the pipeline
-
-getN <- function(x) sum(getUniques(x))
 track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, 
                                                                        getN), rowSums(seqtab.nochim))
 colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", 
@@ -444,7 +246,12 @@ rownames(track) <- sample.names
 head(track)
 
 # Assign taxonomy
+unite.ref <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/sh_general_release_dynamic_29.11.2022.fasta"
+taxa <- assignTaxonomy(seqtab.nochim, unite.ref, multithread = TRUE, tryRC = TRUE)
 
+taxa.print <- taxa  # Removing sequence rownames for display only
+rownames(taxa.print) <- NULL
+head(taxa.print)
 
 # Show Results:
 

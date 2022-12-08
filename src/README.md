@@ -9,17 +9,28 @@ This section contains R scripts that perform various processing and reporting st
 ## DADA2
 
 ### Needed packages
+R packages needed for the dada2 pipeline:
+- dada2
+- ShortRead
+- Biostrings
+- magrittr
+- dplyr
+
+And BioParallel:
+
+    if (!require("BiocManager", quietly = TRUE))
+      install.packages("BiocManager")
+
+    BiocManager::install("BiocParallel")
+
+Load all packages before working with the pipeline.
+
 For removing the primers we will need to install cutadapt.
 Install cutadapt : http://cutadapt.readthedocs.io/en/stable/index.html
 
     python3 -m pip install --user --upgrade cutadapt
 
 After installing cutadapt it will show the directory where it is saved, use that path for in your R script.
-
-    if (!require("BiocManager", quietly = TRUE))
-      install.packages("BiocManager")
-
-    BiocManager::install("BiocParallel")
 
 ### Filter your data
 
