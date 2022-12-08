@@ -75,6 +75,7 @@ FWD3.RC <- dada2:::rc(FWD3)
 FWD4.RC <- dada2:::rc(FWD4)
 FWD5.RC <- dada2:::rc(FWD5)
 REV.RC <- dada2::rc(REV)
+
 # Trim FWD and the reverse-complement of REV off of R1 (forward reads)
 # Only FWD1 is used, error rate default of 0.1 takes out all forward reads
 R1.flags <- paste("-g", FWD1, "-a", REV.RC) 
@@ -140,15 +141,9 @@ out %>%
             mean_remaining = paste0(round(mean(percent_kept), 2), "%"), 
             max_remaining = paste0(round(max(percent_kept), 2), "%"))
 
-# Error Rates Default
-#errF <- learnErrors(filtFs, multithread = TRUE)
-#errR <- learnErrors(filtRs, multithread = TRUE)
-
-#plotErrors(errF, nominalQ = TRUE)
-#plotErrors(errR, nominalQ = TRUE)
-
 # Error Rates Outcome
 
+# Option 1
 errR_1 <- learnErrors(
   filtFs,
   multithread = TRUE,
@@ -166,7 +161,6 @@ errF_1 <- learnErrors(
 )
 
 # Option 2
-# check what this looks like
 errF_2 <- learnErrors(
   filtFs,
   multithread = TRUE,
@@ -184,7 +178,6 @@ errR_2 <- learnErrors(
 )
 
 # Option 3
-# check what this looks like
 errF_3 <- learnErrors(
   filtFs,
   multithread = TRUE,
@@ -193,7 +186,6 @@ errF_3 <- learnErrors(
   verbose = TRUE
 )
 
-# check what this looks like
 errR_3 <- learnErrors(
   filtRs,
   multithread = TRUE,
@@ -214,15 +206,14 @@ plotErrors(errR_3, nominalQ = TRUE)
 
 # Dereplicate identical reads
 # This reduces the running time
-
 derepFs <- derepFastq(filtFs, verbose = TRUE)
 derepRs <- derepFastq(filtRs, verbose = TRUE)
+
 # Name the derep-class objects by the sample names
 names(derepFs) <- sample.names
 names(derepRs) <- sample.names
 
 # Sample Inference 
-
 dadaFs <- dada(derepFs, err = errF_2, multithread = TRUE)
 dadaRs <- dada(derepRs, err = errR_2, multithread = TRUE)
 
@@ -252,15 +243,4 @@ taxa <- assignTaxonomy(seqtab.nochim, unite.ref, multithread = TRUE, tryRC = TRU
 taxa.print <- taxa  # Removing sequence rownames for display only
 rownames(taxa.print) <- NULL
 head(taxa.print)
-
-# Show Results:
-
-# Optinal
-# plotQualityProfile(fnFs[1:2])
-# plotQualityProfile(fnRs[1:2])
-# To view primers: //.orients
-# plotQualityProfile(cutRs[1:2])
-
-# fwd_qual_plots_filt
-# rev_qual_plots_filt
 
