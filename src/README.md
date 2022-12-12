@@ -6,10 +6,10 @@ This section contains R scripts that perform various processing and reporting st
 - [DADA2.R](DADA2.R) - dada2 ITS workflow pipeline NovaSeq data
 - [RarefactionCurve.R](RarefactionCurve.R) - rarefaction curve script metabarcoding soil data from ±Leiden
 
-## DADA2
+## [DADA2.R](DADA2.R)
 
 ### Needed packages
-R packages needed for the dada2 pipeline:
+# R packages:
 - dada2
 - ShortRead
 - Biostrings
@@ -25,6 +25,7 @@ And BioParallel:
 
 Load all packages before working with the pipeline.
 
+# Other packages:
 For removing the primers we will need to install cutadapt.
 Install cutadapt : http://cutadapt.readthedocs.io/en/stable/index.html
 
