@@ -14,6 +14,7 @@ system2(cutadapt, args = "--version")
 # Import all functions
 source("/home/winny.thoen/arise-metabarcoding-biodiversity/src/FunctionsDADA2.R")
 
+# List all reads from the path
 list.files(path)
 
 # We have to separate the two different reads (read1 and read2)
