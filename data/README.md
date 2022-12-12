@@ -28,9 +28,17 @@ Use this to move all needed data with the right markers to a specific directory.
 
 To use the server we need to set up the data on the MaaS server. To do so use scp
 
-    scp *.gz ubuntu@145.136.253.38:/home/winny.thoen/arise-metabarcoding-biodiversity/
+    scp *.gz ubuntu@145.136.253.38:winny.thoen/Data/
 
-Where `*.gz` are all the files within the current directory and `ubuntu@145.136.253.38:/home/winny.thoen/arise-metabarcoding-biodiversity/` is the directory on the MaaS server.
-After moving the data check the permissions before using the dada2 pipeline. Is necessary change the permissions using `chmod`.
+Where `*.gz` are all the files within the current directory and `ubuntu@145.136.253.38:~/winny.thoen/Data/` is the directory on the MaaS server. It is not possible to place your data from a local computer in your specific account on the server. To do so de data can be moved from `~/winny.thoen/Data` to `/home/winny.thoen/arise-metabarcoding-biodiversity/data/raw_sequencesNovaSeq`. Where `winny.thoen` is the personal account where the data needs to be stored. To move the data:
+    
+    sudo mv *.gz /home/winny.thoen/arise-metabarcoding-biodiversity/data/raw_sequencesNovaSeq
+    
+If the data is to big, `mv` doesn't work. Use find:
+
+    sudo find . -name '*gz*' -exec mv {} /home/winny.thoen/arise-metabarcoding-biodiversity/data/raw_sequencesNovaSeq \;
+
+    
+After moving the data check the permissions before using the dada2 pipeline. If necessary change the permissions using `chmod`.
 
 

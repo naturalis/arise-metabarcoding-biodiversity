@@ -5,16 +5,18 @@ This section contains R scripts that perform various processing and reporting st
 - [BasicInfo.R](BasicInfo.R) - basic information from the datasets
 - [DADA2.R](DADA2.R) - dada2 ITS workflow pipeline NovaSeq data
 - [RarefactionCurve.R](RarefactionCurve.R) - rarefaction curve script metabarcoding soil data from ±Leiden
+- [FunctionsDADA2.R](FunctionsDADA2.R)
 
 ## [DADA2.R](DADA2.R)
 
-### Needed packages
-# R packages:
+### Needed R packages
 - dada2
 - ShortRead
 - Biostrings
 - magrittr
 - dplyr
+
+    install.package(..)
 
 And BioParallel:
 
@@ -25,7 +27,7 @@ And BioParallel:
 
 Load all packages before working with the pipeline.
 
-# Other packages:
+### Other packages:
 For removing the primers we will need to install cutadapt.
 Install cutadapt : http://cutadapt.readthedocs.io/en/stable/index.html
 
@@ -33,7 +35,7 @@ Install cutadapt : http://cutadapt.readthedocs.io/en/stable/index.html
 
 After installing cutadapt it will show the directory where it is saved, use that path for in your R script.
 
-### Filter your data
+# Filter your data
 
 The code used to filter my data:
 
@@ -63,3 +65,5 @@ Simply said; NovaSeq data has a lot more data so a lot more errors.
 This is why we need to use a different error model.. There are a lot of people online who have tested multiple different error models. When testing the error models look at the error plots; the closer the black dots are to the black line ánd keep decreacing are the best.
 I have tested 5 different error models on my data, including the default for comparison. The discussions that directed me to try these different error models; https://github.com/benjjneb/dada2/issues/791 and https://github.com/ErnakovichLab/dada2_ernakovichlab#learn-the-error-rates. You can read these for extra information. 
 After trying all the different error models and comparing the plots if chose error model ?.
+
+All 4 error models are in [FunctionsDADA2.R](FunctionsDADA2.R)
