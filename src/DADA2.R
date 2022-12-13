@@ -143,8 +143,10 @@ out %>%
             max_remaining = paste0(round(max(percent_kept), 2), "%"))
 
 # Error Rates Outcome
+# Change errorEstimationFunction = loessErrfun_mod1 to specify whitch error model you want to use
+# Error model 1 : loessErrfun_mod1 / Error model 2 : loessErrfun_mod2 /
+# Error model 3 : loessErrfun_mod3 / Error model 4 : loessErrfun_mod4
 
-# Option 1
 errR_1 <- learnErrors(
   filtFs,
   multithread = TRUE,
@@ -161,40 +163,6 @@ errF_1 <- learnErrors(
   verbose = TRUE
 )
 
-# Option 2
-errF_2 <- learnErrors(
-  filtFs,
-  multithread = TRUE,
-  nbases = 1e8,
-  errorEstimationFunction = loessErrfun_mod2,
-  verbose = TRUE
-)
-
-errR_2 <- learnErrors(
-  filtRs,
-  multithread = TRUE,
-  nbases = 1e8,
-  errorEstimationFunction = loessErrfun_mod2,
-  verbose = TRUE
-)
-
-# Option 3
-errF_3 <- learnErrors(
-  filtFs,
-  multithread = TRUE,
-  nbases = 1e10,
-  errorEstimationFunction = loessErrfun_mod3,
-  verbose = TRUE
-)
-
-errR_3 <- learnErrors(
-  filtRs,
-  multithread = TRUE,
-  nbases = 1e10,
-  errorEstimationFunction = loessErrfun_mod3,
-  verbose = TRUE
-)
-
 # Create all plots
 plotErrors(errF_1, nominalQ = TRUE)
 plotErrors(errR_1, nominalQ = TRUE)
@@ -204,6 +172,9 @@ plotErrors(errR_2, nominalQ = TRUE)
 
 plotErrors(errF_3, nominalQ = TRUE)
 plotErrors(errR_3, nominalQ = TRUE)
+
+plotErrors(errF_4, nominalQ = TRUE)
+plotErrors(errR_4, nominalQ = TRUE)
 
 # Dereplicate identical reads
 # This reduces the running time
