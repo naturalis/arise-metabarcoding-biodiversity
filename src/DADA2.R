@@ -71,10 +71,6 @@ fnFs.cut <- file.path(path.cut, basename(fnFs))
 fnRs.cut <- file.path(path.cut, basename(fnRs))
 
 FWD1.RC <- dada2:::rc(FWD1)
-FWD2.RC <- dada2:::rc(FWD2)
-FWD3.RC <- dada2:::rc(FWD3)
-FWD4.RC <- dada2:::rc(FWD4)
-FWD5.RC <- dada2:::rc(FWD5)
 REV.RC <- dada2::rc(REV)
 
 # Trim FWD and the reverse-complement of REV off of R1 (forward reads)
@@ -167,14 +163,14 @@ errF_1 <- learnErrors(
 plotErrors(errF_1, nominalQ = TRUE)
 plotErrors(errR_1, nominalQ = TRUE)
 
-plotErrors(errF_2, nominalQ = TRUE)
-plotErrors(errR_2, nominalQ = TRUE)
+#plotErrors(errF_2, nominalQ = TRUE)
+#plotErrors(errR_2, nominalQ = TRUE)
 
-plotErrors(errF_3, nominalQ = TRUE)
-plotErrors(errR_3, nominalQ = TRUE)
+#plotErrors(errF_3, nominalQ = TRUE)
+#plotErrors(errR_3, nominalQ = TRUE)
 
-plotErrors(errF_4, nominalQ = TRUE)
-plotErrors(errR_4, nominalQ = TRUE)
+#plotErrors(errF_4, nominalQ = TRUE)
+#plotErrors(errR_4, nominalQ = TRUE)
 
 # Dereplicate identical reads
 # This reduces the running time
