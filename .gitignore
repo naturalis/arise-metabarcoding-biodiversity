@@ -6,6 +6,6 @@
 *.Rproj
 data/TestITS/
 data/raw_sequences_NovaSeq/
-data/sh_general_release_dynamic_29.11.2022.fasta
+data/UNITE_database/
 taxaPRINT_complete.RData
 taxa_complete.RData

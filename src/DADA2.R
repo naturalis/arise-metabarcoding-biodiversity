@@ -5,10 +5,16 @@ library(Biostrings)
 library(magrittr)
 library(dplyr)
 
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("BiocParallel")
+
 # Assign the path were the data is
 # Assign the path for cutadapt -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
-path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/raw_sequences_NovaSeq"
+path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/TestITS"
 cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
+unite.ref <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/UNITE_database/sh_general_release_dynamic_29.11.2022.fasta"
 system2(cutadapt, args = "--version")
 
 # Import all functions
@@ -205,7 +211,6 @@ rownames(track) <- sample.names
 head(track)
 
 # Assign taxonomy
-unite.ref <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/sh_general_release_dynamic_29.11.2022.fasta"
 taxa <- assignTaxonomy(seqtab.nochim, unite.ref, multithread = TRUE, tryRC = TRUE)
 
 taxa.print <- taxa  # Removing sequence rownames for display only

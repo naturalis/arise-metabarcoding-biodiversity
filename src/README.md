@@ -43,7 +43,8 @@ The code used to filter my data:
 
 With my data I used `truncLen=c(240,200)` because my data is ±251bp per sample. 
 The `maxE` parameter sets the maximum number of expected errors allowed in a read.
-`truncQ` filters out low quality reads by comparing if they are less or equel to the truncQ score. 
+`truncQ` filters out low quality reads by comparing if they are less or equel to the truncQ score.
+When handling your own data use this for extra information: https://rdrr.io/bioc/dada2/man/filterAndTrim.html
 
 After filtering your data you can test your data:
 
