@@ -16,7 +16,6 @@ path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/TestITS"
 cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
 unite.ref <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/UNITE_database/sh_general_release_dynamic_29.11.2022.fasta"
 system2(cutadapt, args = "--version")
-
 # Import all functions
 source("/home/winny.thoen/arise-metabarcoding-biodiversity/src/FunctionsDADA2.R")
 
@@ -112,7 +111,7 @@ rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs.cut[[1]]),
 cutFs <- sort(list.files(path.cut, pattern = "_R1_", full.names = TRUE))
 cutRs <- sort(list.files(path.cut, pattern = "_R2_", full.names = TRUE))
 
-# Extract sample names, assuming filenames have format:
+# (Optional) Extract sample names, assuming filenames have format:
 sample.names <- unname(sapply(cutFs, get.sample.name))
 sample.namesR <- unname(sapply(cutRs, get.sample.name))
 head(sample.namesR)
@@ -128,12 +127,12 @@ out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxEE=c(2,2), truncLen=c(240,
                      minLen = 200, compress=TRUE, verbose=TRUE, multithread=TRUE)  # on windows, set multithread = FALSE
 head(out)
 
-# Double check for identical sample names
+# (Optional) Double check for identical sample names
 if(!identical(sample.names, sample.namesR)) stop("Forward and reverse files do not match.")
 names(filtFs) <- sample.names
 names(filtRs) <- sample.names
 
-# Controleren op de output 
+# (Optional) Check the output 
 out %>% 
   data.frame() %>% 
   mutate(Samples = rownames(.),
@@ -149,19 +148,19 @@ out %>%
 # Error model 1 : loessErrfun_mod1 / Error model 2 : loessErrfun_mod2 /
 # Error model 3 : loessErrfun_mod3 / Error model 4 : loessErrfun_mod4
 
-errR_1 <- learnErrors(
-  filtFs,
-  multithread = TRUE,
-  nbases = 1e10,
-  errorEstimationFunction = loessErrfun_mod1,
-  verbose = TRUE
-)
-  
-errF_1 <- learnErrors(
+errR_4 <- learnErrors(
   filtRs,
   multithread = TRUE,
   nbases = 1e10,
-  errorEstimationFunction = loessErrfun_mod1,
+  errorEstimationFunction = loessErrfun_mod4,
+  verbose = TRUE
+)
+  
+errF_4 <- learnErrors( 
+  filtFs,
+  multithread = TRUE,
+  nbases = 1e10,
+  errorEstimationFunction = loessErrfun_mod4,
   verbose = TRUE
 )
 

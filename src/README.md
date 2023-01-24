@@ -35,6 +35,12 @@ Install cutadapt : http://cutadapt.readthedocs.io/en/stable/index.html
 
 After installing cutadapt it will show the directory where it is saved, use that path for in your R script.
 
+# First Filter
+
+    filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE)
+
+The first filter options are given before removing the primers. Otherwise the primers might not get detected and/or removed. `maxN = 0` states that there not be more then 0 other characters (N's) detected.
+
 # Filter your data
 
 The code used to filter my data:
