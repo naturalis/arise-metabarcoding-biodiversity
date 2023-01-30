@@ -2,9 +2,7 @@
 
 This section contains R scripts that perform various processing and reporting steps:
 
-- [BasicInfo.R](BasicInfo.R) - basic information from the datasets
 - [DADA2.R](DADA2.R) - dada2 ITS workflow pipeline NovaSeq data
-- [RarefactionCurve.R](RarefactionCurve.R) - rarefaction curve script metabarcoding soil data from ±Leiden
 - [FunctionsDADA2.R](FunctionsDADA2.R)
 
 ## [DADA2.R](DADA2.R)
@@ -119,12 +117,47 @@ Is is possible to inspect all the results we saved from the pipeline in one tabl
 
 ### Taxonomic assignment
 
+UNITE database is used as taxonomic assignment [line:2014-219]. The results are done, and can be exported. Use the following command to save from the global environment:
+
+    save(taxa, file = "results.Rdata")
+    
+ After saving to your home directory, export the file.
 
 
+## [FunctionsDADA2.R](FunctionsDADA2.R)
 
+### AllOrients
 
+This function makes a forward, reversed, compliment and reversed compliment primer of every primer given. This information is needed when trying to locate all the primers in the data.
+Note: To avoid mixups check is the REV primer matches REVcomp exactly -> if so: replace REV <- REV.orient[[“RevComp”]] before proceeding with the rest of the pipeline.
 
+### primerHits
+This function detects the primers in your data. Outcome of this function is shown after creating a rbind table [line:59-71] [DADA2.R](DADA2.R).
+Expected outcome of this function:
+                 Forward Complement Reverse RevComp
+FWD.ForwardReads    4000          0       0       0
+FWD.ReverseReads       0          0       0    4000
+REV.ForwardReads       0          0       0    4000
+REV.ReverseReads    4000          0       0       0
+*4000 is an estimation -> expected a big number
+* 0 expect exactly 0
 
+### Get.sample.name
+After the primers are removed, the data is ready to be further analysed. First, we look at the sample names; assuming the filenames have this format; change if needed.
+
+### Error rates
+We need to look at the error rates of the data, by visualizing it in a plot. The default mode to do so doesn’t work on this data, because it is NovaSeq Illumina data. NovaSeq generates a lot more data, so therefor there will be a lot more errors. There are four great options as an alternative for the error rates. There will not be one ‘perfect’ plot, that’s just the way it is with NovaSeq data. Best way to check is to pick the one where the dots match the black line and keep increasing. Best way to test is on test data, keep in mind that this step may take ±24 hours to test (even with smaller testdata).
+-	loessErrfun_mod1 
+Error model option 1
+-	loessErrfun_mod2 
+Error model option 2
+-	loessErrfun_mod3 
+Error model option 3
+-	loessErrfun_mod4 
+Error model option 4
+
+### getN
+This function in used around the end of the pipeline to make a table of all the unique reads from every output. This table can be useful examining the outputs.
 
 
 

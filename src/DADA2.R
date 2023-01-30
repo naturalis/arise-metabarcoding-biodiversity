@@ -211,7 +211,7 @@ colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged",
 rownames(track) <- sample.names
 head(track)
 
-# Assign taxonomy
+    # Assign taxonomy
 taxa <- assignTaxonomy(seqtab.nochim, unite.ref, multithread = TRUE, tryRC = TRUE)
 
 taxa.print <- taxa  # Removing sequence rownames for display only
