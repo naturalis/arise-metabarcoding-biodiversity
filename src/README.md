@@ -51,22 +51,22 @@ The functions of the DADA2 workflow are imported seperately due to the size of t
 
     source("/home/winny.thoen/arise-metabarcoding-biodiversity/src/FunctionsDADA2.R")
 
-# Seperating data
+### Seperating data
 
 The first thing we do is separate the data from R1 and R2. Change this if needed depending on your file naming [line:23,26-27]. 
 
-# (Optional) Quality check
+### Optional) Quality check
 
 Thoughout the pipeline there are a couple of moments when you can make a quality plot. This is not a necessary step, but may be something you want to do depending on your research. The 'Quality Check' moments will be presented as an optional step.
 
     plotQualityProfile(fnFs[1:2])
     plotQualityProfile(fnRs[1:2])
 
-# Identify primers
+### Identify primers
 
 Identify the primers that were used for your dataset [line:34-41]. The function `allOrients()` [FunctionsDADA2.R](FunctionsDADA2.R) is used to make a list of all possible nominations for each of the primer [line:43-50].
 
-# First Filter
+### First Filter
 
 Create new directory for filtered results [line:53-55]. The first filter options are given before removing the primers. Otherwise the primers might not get detected and/or removed. `maxN = 0` states that there not be more then 0 other characters (N's) detected.
 
@@ -74,13 +74,13 @@ Create new directory for filtered results [line:53-55]. The first filter options
     
 Detected primers are shown in a table by using `primerHits` function [FunctionsDADA2.R](FunctionsDADA2.R) [line:59-71].
 
-# Primer removal
+### Primer removal
 
 Create new directory for results after primer removal [line:75-78]. The next lines define the parameters that cutadapt will use. As u can see we only use forward primer 1, instead of all 5 that were used. This reason is that the default error rate that is used as the primers are removed is 0.1. Which means that there can be a difference of 10% in the primer as it is detected and removed. As all 5 forward primers are almost the same, they all fit exactly in this error rate. After removing forward read one, all five forward reads are removed. We check this as we make a new table to detect the primers using the function `primerHits()` [FunctionsDADA2.R](FunctionsDADA2.R) [line:98-110]. After primer removal seperate the results again by read 1 and read2 [line:112-114].
 
-# (Optional) Quality check Moment
+### Optional) Quality check Moment
 
-# Filter and trim your data
+### Filter and trim your data
 
 Create new directory for results after filter and trimming [line:125-126].
 The code used to filter my data:
@@ -104,20 +104,20 @@ After filtering your data you can test your data:
 
 If scores come out very low, try to change `truncLen`. 
 
-# Error rates
+### Error rates
 
 Simply said; NovaSeq data has a lot more data so a lot more errors. This is why we need to use a different error model. There are a lot of people online who have tested multiple different error models. When testing the error models look at the error plots; the closer the black dots are to the black line ánd keep decreacing are the best. The discussions that directed me to try these different error models; https://github.com/benjjneb/dada2/issues/791 and https://github.com/ErnakovichLab/dada2_ernakovichlab#learn-the-error-rates. You can read these for extra information. I have compared all 4 error models and the differences where very small, at the end I decided to use error model 1 as they had the best results. All 4 error models are in [FunctionsDADA2.R](FunctionsDADA2.R). This step takes at least an hour, at the end you can make a plot result from the error models using PlotErrors [line:170-172]. The plots will appear in a Plots.pdf file in your home directory. 
-# Qualoity results 
+### Qualoity results 
 
 Dereplication is to remove almost identical reads, making the results high quality and reducing the running time [line:184-186]. Sample inference is the last step for higher quality results [line:192-194], before merging the reads together [line:196-197]. After merging we can make an amplicon sequence variant table (ASV) [line:199-201], and lastly remove de chimeras [line:203-204]. To inspect the lengths of the sequences use the following command in console:
 
     table(nchar(getSequences(seqtab.nochim)))
 
-# Track back
+### Track back
 
 Is is possible to inspect all the results we saved from the pipeline in one table. You can do a trackback [line:206-212].
 
-# Taxonomic assignment
+### Taxonomic assignment
 
 
 
