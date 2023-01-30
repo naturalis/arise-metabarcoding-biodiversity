@@ -11,11 +11,11 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("BiocParallel")
 
 # Assign the path were the data is
-# Assign the path for cutadapt -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
 path <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/TestITS"
+# Assign the path for cutadapt & taxonomic reverence -> install cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
 cutadapt <- "/home/winny.thoen/.local/bin/cutadapt"
 unite.ref <- "/home/winny.thoen/arise-metabarcoding-biodiversity/data/UNITE_database/sh_general_release_dynamic_29.11.2022.fasta"
-system2(cutadapt, args = "--version")
+
 # Import all functions
 source("/home/winny.thoen/arise-metabarcoding-biodiversity/src/FunctionsDADA2.R")
 
@@ -31,7 +31,7 @@ fnRs <- sort(list.files(path, pattern = "_R2_", full.names = TRUE))
 # plotQualityProfile(fnFs[1:2])
 # plotQualityProfile(fnRs[1:2])
 
-# Identify the primers
+    # PRIMERS
 # The forward primers are all the same primer, except for the barcodes/adapters
 FWD1 <- "CTAGACTCGTCATCGATGAAGAACGCAG"
 FWD2 <- "CTAGACTCGTCAACGATGAAGAACGCAG"
@@ -49,6 +49,7 @@ FWD4.orients <- allOrients(FWD4)
 FWD5.orients <- allOrients(FWD5)
 REV.orients <- allOrients(REV)
 
+    # FILTER 1
 # Here we make a new path where we can save the filtered reads.
 fnFs.filtN <- file.path(path, "filtN", basename(fnFs))
 fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
@@ -69,6 +70,7 @@ rbind(FWD1.ForwardReads = sapply(FWD1.orients, primerHits, fn = fnFs.filtN[[1]])
       REV.ForwardReads = sapply(REV.orients, primerHits, fn = fnFs.filtN[[1]]),
       REV.ReverseReads = sapply(REV.orients, primerHits, fn = fnRs.filtN[[1]]))
 
+    # PRIMER REMOVAL
 # Make a new path where the reads can be saved after primer removal
 path.cut <- file.path(path, "cutadapt")
 if(!dir.exists(path.cut)) dir.create(path.cut)
@@ -119,7 +121,7 @@ head(sample.namesR)
 # Now you could look at some Quality plots:
 # plotQualityProfile(cutRs[1:2])
 
-# Filter and trim
+    # FILTER AND TRIM
 filtFs <- file.path(path.cut, "filtered", basename(cutFs))
 filtRs <- file.path(path.cut, "filtered", basename(cutRs))
 
@@ -143,24 +145,25 @@ out %>%
             mean_remaining = paste0(round(mean(percent_kept), 2), "%"), 
             max_remaining = paste0(round(max(percent_kept), 2), "%"))
 
-# Error Rates Outcome
+    # ERROR RATES
+
 # Change errorEstimationFunction = loessErrfun_mod1 to specify whitch error model you want to use
 # Error model 1 : loessErrfun_mod1 / Error model 2 : loessErrfun_mod2 /
 # Error model 3 : loessErrfun_mod3 / Error model 4 : loessErrfun_mod4
 
-errR_4 <- learnErrors(
+errR_1 <- learnErrors(
   filtRs,
   multithread = TRUE,
   nbases = 1e10,
-  errorEstimationFunction = loessErrfun_mod4,
+  errorEstimationFunction = loessErrfun_mod1,
   verbose = TRUE
 )
   
-errF_4 <- learnErrors( 
+errF_1 <- learnErrors( 
   filtFs,
   multithread = TRUE,
   nbases = 1e10,
-  errorEstimationFunction = loessErrfun_mod4,
+  errorEstimationFunction = loessErrfun_mod1,
   verbose = TRUE
 )
 
@@ -177,20 +180,20 @@ plotErrors(errR_1, nominalQ = TRUE)
 #plotErrors(errF_4, nominalQ = TRUE)
 #plotErrors(errR_4, nominalQ = TRUE)
 
-# Dereplicate identical reads
-# This reduces the running time
+    # Quality results
+# Dereplicate
 derepFs <- derepFastq(filtFs, verbose = TRUE)
 derepRs <- derepFastq(filtRs, verbose = TRUE)
 
-# Name the derep-class objects by the sample names
+# (Optional) Name the derep-class objects by the sample names
 names(derepFs) <- sample.names
 names(derepRs) <- sample.names
 
-# Sample Inference 
+# inference 
 dadaFs <- dada(derepFs, err = errF_1, multithread = TRUE)
 dadaRs <- dada(derepRs, err = errR_1, multithread = TRUE)
 
-# Merge paired reads
+# merge paired reads
 mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=TRUE)
 
 # Construct sequence table
@@ -199,9 +202,8 @@ dim(seqtab)
 
 # Remove chimeras
 seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
-table(nchar(getSequences(seqtab.nochim)))
 
-# Track reads through the pipeline
+    # TRACK BACK
 track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, 
                                                                        getN), rowSums(seqtab.nochim))
 colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", 
