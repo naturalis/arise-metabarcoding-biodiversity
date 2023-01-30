@@ -1,9 +1,7 @@
 This section contains the following intermediate and result files:
 
-- [raw_sequences_NovaSeq](raw_sequences_NovaSeq) - This directory contains all raw novaseq data from BaseClear
-- [TestITS](TestITS) - This directory contains the test data
 - [Primers.xlsx](Primers.xlsx) - Primers used by BaseClear for NovaSeq platform
-- [UNITE_database](UNITE_database) - This directory contains UNITE database general fasta files 
+- [UNITE_database] - This directory contains UNITE database general fasta files 
 
 ### Prepare your data:
 
