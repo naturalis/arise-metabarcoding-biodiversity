@@ -1,9 +1,9 @@
 This section contains the following intermediate and result files:
 
-- [ARISE_Sample_information_logbook.xlsx](ARISE_Sample_information_logbook.xlsx) - sample information from the soil data (locations ect)
-- [ASVtab_raw.csv](ASVtab_raw.csv) - csv data from the soil data
-- [OTU97tab_tax.csv](OTU97tab_tax.csv) - OTU table from the soil data
+- [raw_sequences_NovaSeq](raw_sequences_NovaSeq) - This directory contains all raw novaseq data from BaseClear
+- [TestITS](TestITS) - This directory contains the test data
 - [Primers.xlsx](Primers.xlsx) - Primers used by BaseClear for NovaSeq platform
+- [UNITE_database](UNITE_database) - This directory contains UNITE database general fasta files 
 
 ### Prepare your data:
 
