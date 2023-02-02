@@ -4,6 +4,7 @@ This section contains R scripts that perform various processing and reporting st
 
 - [DADA2.R](DADA2.R) - dada2 ITS workflow pipeline NovaSeq data
 - [FunctionsDADA2.R](FunctionsDADA2.R)
+- [ASV2OTU.R](ASV2OTU.R)
 
 ## [DADA2.R](DADA2.R)
 
@@ -53,7 +54,7 @@ The functions of the DADA2 workflow are imported seperately due to the size of t
 
 The first thing we do is separate the data from R1 and R2. Change this if needed depending on your file naming [line:24,27-28]. 
 
-### Optional) Quality check
+### (Optional) Quality check
 
 Thoughout the pipeline there are a couple of moments when you can make a quality plot. This is not a necessary step, but may be something you want to do depending on your research. The 'Quality Check' moments will be presented as an optional step.
 
@@ -76,7 +77,7 @@ Detected primers are shown in a table by using `primerHits` function [FunctionsD
 
 Create new directory for results after primer removal [line:76-79]. The next lines define the parameters that cutadapt will use. As u can see we only use forward primer 1, instead of all 5 that were used. This reason is that the default error rate that is used as the primers are removed is 0.1. Which means that there can be a difference of 10% in the primer as it is detected and removed. As all 5 forward primers are almost the same, they all fit exactly in this error rate. After removing forward read one, all five forward reads are removed. We check this as we make a new table to detect the primers using the function `primerHits()` [FunctionsDADA2.R](FunctionsDADA2.R) [line:99-111]. After primer removal seperate the results again by read 1 and read2 [line:113-115].
 
-### Optional) Quality check Moment
+### (Optional) Quality check Moment
 
 ### Filter and trim your data
 
@@ -173,5 +174,14 @@ Error model option 4
 ### getN
 This function in used around the end of the pipeline to make a table of all the unique reads from every output. This table can be useful examining the outputs.
 
+## [ASV2OTU.R](ASV2OTU.R)
 
+To use this script your need to have a finished ASV table from [DADA2.R](DADA2.R).
+This little script uses a lot of packages, make sure to load all the required packages [line:1-11].
 
+Define sample names, sequences and number of processors u want to use for clustering [line:13-16]
+
+### Clusters from ASV to OTU
+
+Use DECIPHER to collect all clusters from the ASV file and form the new OTUs [line:18-26]. Add the sequences as a column before merging the clusters together with the sample names[line:30-37].
+Export OTU as an csv file[line:39-40].
