@@ -35,7 +35,15 @@ its package manager pip, and [the R runtime](https://linuxize.com/post/how-to-in
     sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
     sudo apt install r-base
 
-Installation instructions for the RStudio server, which also needs to be installed, are [here](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/)
+Installation instructions for the RStudio server, which also needs to be installed, are [here](https://www.how2shout.com/linux/install-rstudio-server-open-source-on-ubuntu-20-04-lts/) (link included as reference only).  
+To prevent incompatibility issues with the R graphics engine use version 2022.12.0-353 or higher:
+
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/"
+    sudo apt update
+    sudo apt-get install gdebi-core
+    wget https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
+    sudo gdebi rstudio-server-2022.12.0-353-amd64.deb
 
 ## User-level configuration
 
