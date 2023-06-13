@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: 't Hoen
+    given-names: Winny
+    orcid: https://orcid.org/1234-5678-9101-1121?
+title: "DADA2 ITS workflow for fungal metabarcoding data"
+version: 1
+doi: 10.5281/zenodo.?
+date-released: 2023-06
